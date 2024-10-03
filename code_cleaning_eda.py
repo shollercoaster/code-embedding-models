@@ -6,7 +6,8 @@ import numpy as np
 from collections import Counter
 from statistics import mean, median, stdev
 from transformers import AutoTokenizer
-
+import json
+import subprocess
 
 data_files = {
 "train": ['python/final/jsonl/train/python_train_0.jsonl.gz',
@@ -205,11 +206,34 @@ def filter_len(
     return len(tokenizer.tokenize(row.method)) < method_len and len(tokenizer.tokenize(row.comment)) < comment_len
 
 
+"""
+TRAINING
+"""
+def convert_dataset_to_codexglue_structure(train_df, val_df, test_df):
+    train_df['code_tokens'] = train_df.method.apply(lambda x: x.split())
+    train_df['docstring_tokens'] = train_df.comment.apply(lambda x: x.split())
+    with open('python/train.jsonl','w') as f:
+        for _, row in train_df.iterrows():
+            f.write(json.dumps(row.to_dict()) + '\n')
+
+    val_df['code_tokens'] = val_df.method.apply(lambda x: x.split())
+    val_df['docstring_tokens'] = val_df.comment.apply(lambda x: x.split())
+    with open('python/valid.jsonl','w') as f:
+        for _, row in val_df.iterrows():
+            f.write(json.dumps(row.to_dict()) + '\n')
+
+    test_df['code_tokens'] = test_df.method.apply(lambda x: x.split())
+    test_df['docstring_tokens'] = test_df.comment.apply(lambda x: x.split())
+    with open('python/test.jsonl','w') as f:
+        for _, row in test_df.iterrows():
+            f.write(json.dumps(row.to_dict()) + '\n')
 
 """
 FUNCTION CALLS
 """
 train_df, val_df, test_df = split_dataset(raw_dataset)
+
+print("lengths of datasets before processing: ", len(train_df), len(val_df), len(test_df))
 
 train_df = train_df[train_df['method'].apply(lambda x: is_ascii(x))]
 val_df = val_df[val_df['method'].apply(lambda x: is_ascii(x))]
@@ -255,3 +279,54 @@ test_df = test_df[test_df.apply(
         max_comment_len
     ), axis = 1
 )]
+
+print("lengths of datasets after processing: ", len(train_df), len(val_df), len(test_df))
+
+convert_dataset_to_codexglue_structure(train_df, val_df, test_df)
+
+"""
+TRAINING CALLS
+"""
+
+lang = 'python' # programming language
+lr = 5e-5
+batch_size = 8 # change depending on the GPU Colab gives you
+beam_size = 10
+source_length = 256
+target_length = max_comment_len
+data_dir = '.'
+output_dir = f'model/{lang}'
+train_file = f'{data_dir}/{lang}/train.jsonl'
+dev_file = f'{data_dir}/{lang}/valid.jsonl'
+epochs = 10
+pretrained_model = 'microsoft/codebert-base'
+
+# The command to be executed
+command = [
+    "python", "run.py",
+    "--do_train",
+    "--do_eval",
+    "--do_lower_case",
+    "--model_type", "roberta",
+    "--model_name_or_path", pretrained_model,
+    "--train_filename", train_file,
+    "--dev_filename", dev_file,
+    "--output_dir", output_dir,
+    "--max_source_length", str(source_length),
+    "--max_target_length", str(target_length),
+    "--beam_size", str(beam_size),
+    "--train_batch_size", str(batch_size),
+    "--eval_batch_size", str(batch_size),
+    "--learning_rate", str(lr),
+    "--num_train_epochs", str(epochs)
+]
+
+# Run the command
+result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+# Capture the output and errors (optional)
+stdout = result.stdout.decode('utf-8')
+stderr = result.stderr.decode('utf-8')
+
+print("Output:", stdout)
+print("Errors:", stderr)
