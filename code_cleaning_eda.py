@@ -1,12 +1,11 @@
 from datasets import load_dataset, Dataset
-import Pandas as pd
+import pandas as pd
 from tqdm.auto import tqdm
 from bs4 import BeautifulSoup
 import numpy as np
 from collections import Counter
 from statistics import mean, median, stdev
 from transformers import AutoTokenizer
-import matplotlib.pyplot as plt
 
 
 data_files = {
@@ -140,7 +139,7 @@ def add_inline(df: pd.DataFrame) -> pd.DataFrame:
     df_pairs = pd.concat([pairs for pairs in all_pairs])
     return pd.concat([df, df_pairs])
 
-def remove_html_tags(comment: str) -> str):
+def remove_html_tags(comment: str) -> str:
     '''
     Remove any HTML tags from a given comment
 
@@ -149,7 +148,7 @@ def remove_html_tags(comment: str) -> str):
     '''
     return BeautifulSoup(comment, "html.parser").get_text()
 
-def primary_cleaning() -> None:
+def primary_cleaning(train_df, val_df, test_df) -> None:
     '''
     Convert to lower case, remove extra whitespace, remove empty comments, and remove duplicates.
     '''
@@ -228,7 +227,7 @@ train_df.comment = train_df.comment.apply(remove_html_tags)
 val_df.comment = val_df.comment.apply(remove_html_tags)
 test_df.comment = test_df.comment.apply(remove_html_tags)
 
-primary_cleaning()
+primary_cleaning(train_df, val_df, test_df)
 
 tokenizer = AutoTokenizer.from_pretrained('microsoft/codebert-base')
 method_cnt = get_counter(train_df, tokenizer, 'method')
