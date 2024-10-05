@@ -146,7 +146,7 @@ def train(args, train_dataset, model, tokenizer):
     lora_config = LoraConfig(
         r=16,
         lora_alpha=32,
-        target_modules=["q_proj", "v_proj"],  # RoBERTa attention layers to apply LoRA
+        target_modules=["query", "value"],  # RoBERTa attention layers to apply LoRA
         lora_dropout=0.1
     )
     
