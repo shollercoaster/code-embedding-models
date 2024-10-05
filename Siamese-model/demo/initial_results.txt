@@ -1,0 +1,37 @@
+Query: set a variable as hello world
+
+Code: f.write('hello world')
+Score: 0.0016619082307443023
+
+Code: s = 'hello world'
+Score: 0.9978575110435486
+
+Code: hello world
+Score: 0.0004805935896001756
+
+
+Query: Download an image and save the content in output_dir
+
+Code: 
+def f(image_url, output_dir):
+    import requests
+    r = requests.get(image_url)
+    with open(output_dir, 'wb') as f:
+        f.write(r.content)
+
+Score: 0.9694538116455078
+
+Code: 
+def f(image, output_dir):
+    with open(output_dir, 'wb') as f:
+        f.write(image)
+
+Score: 9.678407514002174e-05
+
+Code: 
+def f(image_url, output_dir):
+    import requests
+    r = requests.get(image_url)
+    return r.content
+
+Score: 0.030449513345956802

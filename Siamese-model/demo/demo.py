@@ -6,7 +6,7 @@ model = RobertaModel.from_pretrained("python_model")
 
 query = "set a variable as hello world"
 query_vec = model(tokenizer(query,return_tensors='pt')['input_ids'])[1]
-code_1="print('hello world')"
+code_1="f.write('hello world')"
 code1_vec = model(tokenizer(code_1,return_tensors='pt')['input_ids'])[1]
 code_2="s = 'hello world'"
 code2_vec = model(tokenizer(code_2,return_tensors='pt')['input_ids'])[1]
@@ -16,12 +16,14 @@ code_vecs=torch.cat((code1_vec,code2_vec,code3_vec),0)
 codes = [code_1,code_2,code_3]
 scores=torch.einsum("ab,cb->ac",query_vec,code_vecs)
 scores=torch.softmax(scores,-1)
-print("Query:",query)
+
+file = 'initial_results.txt'
+f = open(file, 'w')
+f.write(f"Query: {query}\n")
 for i in range(3):
-    print("Code:",codes[i])
-    print("Score:",scores[0,i].item())
-    
-    
+    f.write(f"\nCode: {codes[i]}\n")
+    f.write(f"Score: {scores[0,i].item()}\n")
+
     
 query = "Download an image and save the content in output_dir"
 query_vec = model(tokenizer(query,return_tensors='pt')['input_ids'])[1]
@@ -50,8 +52,8 @@ code_vecs=torch.cat((code1_vec,code2_vec,code3_vec),0)
 codes = [code_1,code_2,code_3]
 scores=torch.einsum("ab,cb->ac",query_vec,code_vecs)
 scores=torch.softmax(scores,-1)
-print("")
-print("Query:",query)
+f.write("\n")
+f.write(f"\nQuery: {query}\n")
 for i in range(3):
-    print("Code:",codes[i])
-    print("Score:",scores[0,i].item())
+    f.write(f"\nCode: {codes[i]}\n")
+    f.write(f"Score: {scores[0,i].item()}\n")
