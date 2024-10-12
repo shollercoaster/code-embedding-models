@@ -1,5 +1,5 @@
 cd code
-data_dir=/DS/dsg-ml/work/schaturv/code-embedding-models/text-code
+data_dir=/workspace/text-code
 python run_lora.py \
     --output_dir=$data_dir/saved_models \
     --model_type=roberta \
@@ -10,7 +10,8 @@ python run_lora.py \
     --train_data_file=$data_dir/dataset/train.jsonl \
     --eval_data_file=$data_dir/dataset/valid.jsonl \
     --test_data_file=$data_dir/dataset/test.jsonl \
-    --epoch 1 \
+    --fp16_opt_level=O2 \
+    --epoch 2 \
     --block_size 256 \
     --train_batch_size 64 \
     --eval_batch_size 64 \
