@@ -3,14 +3,14 @@ data_dir=/workspace/text-code
 python run_lora.py \
     --output_dir=$data_dir/saved_models \
     --model_type=roberta \
-    --config_name=microsoft/codebert-base \
-    --model_name_or_path=microsoft/codebert-base \
-    --tokenizer_name=roberta-base \
+    --config_name=microsoft/graphcodebert-base \
+    --model_name_or_path=microsoft/graphcodebert-base \
+    --tokenizer_name=microsoft/graphcodebert-base \
     --do_train \
     --train_data_file=$data_dir/dataset/train.jsonl \
     --eval_data_file=$data_dir/dataset/valid.jsonl \
     --test_data_file=$data_dir/dataset/test.jsonl \
-    --fp16_opt_level=O2 \
+    --fp16_opt_level=O1 \
     --epoch 2 \
     --block_size 256 \
     --train_batch_size 64 \
