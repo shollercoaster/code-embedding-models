@@ -1,0 +1,259 @@
+10/14/2024 11:37:50 - WARNING - __main__ -   Process rank: -1, device: cuda, n_gpu: 2, distributed training: False, 16-bits training: False
+You are using a model of type longformer to instantiate a model of type roberta. This is not supported for all configurations of models and can yield errors.
+10/14/2024 11:37:51 - INFO - __main__ -   Training/evaluation parameters Namespace(train_data_file='..//dataset/train.jsonl', output_dir='..//saved_models/longcoder', eval_data_file='..//dataset/valid.jsonl', test_data_file='..//dataset/test.jsonl', model_type='roberta', model_name_or_path='microsoft/longcoder-base', mlm=False, mlm_probability=0.15, config_name='microsoft/longcoder-base', tokenizer_name='microsoft/longcoder-base', cache_dir='', block_size=256, do_train=True, do_eval=False, do_test=False, evaluate_during_training=True, do_lower_case=False, train_batch_size=64, eval_batch_size=64, gradient_accumulation_steps=1, learning_rate=5e-05, weight_decay=0.0, adam_epsilon=1e-08, max_grad_norm=1.0, num_train_epochs=1.0, max_steps=-1, warmup_steps=0, logging_steps=50, save_steps=50, save_total_limit=None, eval_all_checkpoints=False, no_cuda=False, overwrite_output_dir=False, overwrite_cache=False, seed=123456, epoch=2, fp16=False, fp16_opt_level='O1', local_rank=-1, server_ip='', server_port='', n_gpu=2, device=device(type='cuda'), per_gpu_train_batch_size=32, per_gpu_eval_batch_size=32, start_epoch=0, start_step=0)
+10/14/2024 11:40:03 - INFO - __main__ -   *** Example ***
+10/14/2024 11:40:03 - INFO - __main__ -   idx: 0
+10/14/2024 11:40:03 - INFO - __main__ -   code_tokens: ['<s>', 'def', '_split', '_', 'phy', 'log', 'en', 'y', '_(', '_p', '_,', '_level', '_=', '_"', 's', '"', '_)', '_:', '_level', '_=', '_level', '_+', '_"__', '"', '_result', '_=', '_p', '_.', '_split', '_(', '_level', '_)', '_return', '_result', '_[', '_0', '_]', '_+', '_level', '_+', '_result', '_[', '_1', '_]', '_.', '_split', '_(', '_";"', '_)', '_[', '_0', '_]', '</s>']
+10/14/2024 11:40:03 - INFO - __main__ -   code_ids: 0 729 5192 181 3258 896 386 207 400 428 2019 3144 385 437 201 120 743 545 3144 385 3144 513 12945 120 1046 385 428 746 5192 400 3144 743 483 1046 626 461 2406 513 3144 513 1046 626 524 2406 746 5192 400 29760 743 626 461 2406 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+10/14/2024 11:40:03 - INFO - __main__ -   nl_tokens: ['<s>', 'Return', '_either', '_the', '_full', '_or', '_truncated', '_version', '_of', '_a', '_Q', 'II', 'ME', '_-', '_formatted', '_taxonomy', '_string', '_.', '</s>']
+10/14/2024 11:40:03 - INFO - __main__ -   nl_ids: 0 1675 4759 448 3662 872 19307 2229 595 434 1152 4300 1098 581 10440 29021 724 746 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+10/14/2024 11:40:03 - INFO - __main__ -   *** Example ***
+10/14/2024 11:40:03 - INFO - __main__ -   idx: 1
+10/14/2024 11:40:03 - INFO - __main__ -   code_tokens: ['<s>', 'def', '_ensure', '_', 'dir', '_(', '_d', '_)', '_:', '_if', '_not', '_os', '_.', '_path', '_.', '_exists', '_(', '_d', '_)', '_:', '_try', '_:', '_os', '_.', '_m', 'akedirs', '_(', '_d', '_)', '_except', '_OSError', '_as', '_oe', '_:', '_#', '_should', '_not', '_happen', '_with', '_os', '.', 'makedirs', '_#', '_ENOENT', ':', '_No', '_such', '_file', '_or', '_directory', '_if', '_os', '_.', '_errno', '_==', '_errno', '_.', '_ENOENT', '_:', '_msg', '_=', '_tw', 'dd', '_(', '_"""', 'One', '_or', '_more', '_directories', '_in', '_the', '_path', '_({})', '_do', '_not', '_exist', '.', '_If', 'Ċ', '__________________________', '_you', '_are', '_specifying', '_a', '_new', '_directory', '_for', '_output', ',', '_please', '_ensure', 'Ċ', '__________________________', '_all', '_other', '_directories', '_in', '_the', '_path', '_currently', '_exist', '."""', '_)', '_return', '_msg', '_.', '_format', '_(', '_d', '_)', '_else', '_:', '_msg', '_=', '_tw', 'dd', '_(', '_"""', 'An', '_error', '_occurred', '_trying', '_to', '_create', '_the', '_output', '_directory', 'Ċ', '__________________________', '_({})', '_with', '_message', ':', '_{}', '"""', '_)', '_return', '_msg', '_.', '_format', '_(', '_d', '_,', '_oe', '_.', '_strerror', '_)', '</s>']
+10/14/2024 11:40:03 - INFO - __main__ -   code_ids: 0 729 6229 181 1282 400 480 743 545 462 800 2215 746 1391 746 4534 400 480 743 545 1568 545 2215 746 446 23328 400 480 743 3552 22934 880 44902 545 830 1570 800 7564 918 2215 132 24429 830 41059 144 4038 5632 1012 872 3456 462 2215 746 2341 550 2341 746 41059 545 2345 385 7916 443 400 1638 3533 872 2726 11613 488 448 1391 46072 1000 800 3040 132 1359 317 4584 2713 1147 15323 434 579 3456 563 1721 130 13874 6229 317 4584 1345 1946 11613 488 448 1391 6418 3040 6315 743 483 2345 746 2021 400 480 743 669 545 2345 385 7916 443 400 1638 1088 843 10058 11749 508 1738 448 1721 3456 317 4584 46072 918 1841 144 2334 3947 743 483 2345 746 2021 400 480 2019 44902 746 20115 743 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+10/14/2024 11:40:03 - INFO - __main__ -   nl_tokens: ['<s>', 'Check', '_to', '_make', '_sure', '_the', '_supplied', '_directory', '_path', '_does', '_not', '_exist', '_if', '_so', '_create', '_it', '_.', '_The', '_method', '_catch', 'es', '_OSError', '_exceptions', '_and', '_returns', '_a', '_desc', 'riptive', '_message', '_instead', '_of', '_re', '_-', '_raising', '_the', '_error', '_.', '</s>']
+10/14/2024 11:40:03 - INFO - __main__ -   nl_ids: 0 1749 508 2002 3984 448 8813 3456 1391 2129 800 3040 462 1769 1738 835 746 1044 1454 2092 482 22934 12300 706 2060 434 2162 44105 1841 4488 595 479 581 47183 448 843 746 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+10/14/2024 11:40:03 - INFO - __main__ -   *** Example ***
+10/14/2024 11:40:03 - INFO - __main__ -   idx: 2
+10/14/2024 11:40:03 - INFO - __main__ -   code_tokens: ['<s>', 'def', '_file', '_', 'handle', '_(', '_fn', 'h', '_,', '_mode', '_=', '_"', 'r', 'U', '"', '_)', '_:', '_handle', '_=', '_None', '_if', '_isinstance', '_(', '_fn', 'h', '_,', '_file', '_)', '_:', '_if', '_fn', 'h', '_.', '_closed', '_:', '_raise', '_ValueError', '_(', '_"', 'Input', '_file', '_is', '_closed', '."', '_)', '_handle', '_=', '_fn', 'h', '_elif', '_isinstance', '_(', '_fn', 'h', '_,', '_str', '_)', '_:', '_handle', '_=', '_open', '_(', '_fn', 'h', '_,', '_mode', '_)', '_return', '_handle', '</s>']
+10/14/2024 11:40:03 - INFO - __main__ -   code_ids: 0 729 1012 181 2133 400 4065 190 2019 2119 385 437 200 171 120 743 545 2384 385 1938 462 5408 400 4065 190 2019 1012 743 545 462 4065 190 746 8264 545 3085 6052 400 437 1834 1012 555 8264 3508 743 2384 385 4065 190 3625 5408 400 4065 190 2019 1113 743 545 2384 385 2717 400 4065 190 2019 2119 743 483 2384 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+10/14/2024 11:40:03 - INFO - __main__ -   nl_tokens: ['<s>', 'Takes', '_either', '_a', '_file', '_path', '_or', '_an', '_open', '_file', '_handle', '_checks', '_validity', '_and', '_returns', '_an', '_open', '_file', '_handle', '_or', '_raises', '_an', '_appropriate', '_Exception', '_.', '</s>']
+10/14/2024 11:40:03 - INFO - __main__ -   nl_ids: 0 27408 4759 434 1012 1391 872 817 2717 1012 2384 7825 25911 706 2060 817 2717 1012 2384 872 23154 817 7900 2654 746 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+/DS/dsg-ml/work/schaturv/code-embedding-models/venv/lib/python3.11/site-packages/transformers/optimization.py:591: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+10/14/2024 11:40:16 - INFO - __main__ -   ***** Running training *****
+10/14/2024 11:40:16 - INFO - __main__ -     Num examples = 251820
+10/14/2024 11:40:16 - INFO - __main__ -     Num Epochs = 2
+10/14/2024 11:40:16 - INFO - __main__ -     Instantaneous batch size per GPU = 32
+10/14/2024 11:40:16 - INFO - __main__ -     Total train batch size (w. parallel, distributed & accumulation) = 64
+10/14/2024 11:40:16 - INFO - __main__ -     Gradient Accumulation steps = 1
+10/14/2024 11:40:16 - INFO - __main__ -     Total optimization steps = 7870
+trainable params: 1,179,648 || all params: 129,468,672 || trainable%: 0.9111
+/DS/dsg-ml/work/schaturv/code-embedding-models/venv/lib/python3.11/site-packages/torch/nn/parallel/_functions.py:68: UserWarning: Was asked to gather along dimension 0, but all input tensors were scalars; will instead unsqueeze and return a vector.
+  warnings.warn('Was asked to gather along dimension 0, but all '
+10/14/2024 11:40:48 - INFO - __main__ -   epoch 0 step 100 loss 28.11412
+10/14/2024 11:41:21 - INFO - __main__ -   epoch 0 step 200 loss 24.48001
+10/14/2024 11:41:53 - INFO - __main__ -   epoch 0 step 300 loss 20.8242
+10/14/2024 11:42:29 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 11:42:29 - INFO - __main__ -     Num examples = 9604
+10/14/2024 11:42:29 - INFO - __main__ -     Batch size = 64
+10/14/2024 11:43:03 - INFO - __main__ -     eval_loss = 4.022
+10/14/2024 11:43:03 - INFO - __main__ -     eval_mrr = 0.1176
+10/14/2024 11:43:03 - INFO - __main__ -     ********************
+10/14/2024 11:43:03 - INFO - __main__ -     Best mrr:0.1176
+10/14/2024 11:43:03 - INFO - __main__ -     ********************
+10/14/2024 11:43:08 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 11:43:10 - INFO - __main__ -   epoch 0 step 400 loss 4.62142
+10/14/2024 11:43:40 - INFO - __main__ -   epoch 0 step 500 loss 3.26181
+10/14/2024 11:44:13 - INFO - __main__ -   epoch 0 step 600 loss 2.62036
+10/14/2024 11:44:46 - INFO - __main__ -   epoch 0 step 700 loss 2.24626
+10/14/2024 11:45:12 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 11:45:12 - INFO - __main__ -     Num examples = 9604
+10/14/2024 11:45:12 - INFO - __main__ -     Batch size = 64
+10/14/2024 11:45:47 - INFO - __main__ -     eval_loss = 1.3262
+10/14/2024 11:45:47 - INFO - __main__ -     eval_mrr = 0.2405
+10/14/2024 11:45:47 - INFO - __main__ -     ********************
+10/14/2024 11:45:47 - INFO - __main__ -     Best mrr:0.2405
+10/14/2024 11:45:47 - INFO - __main__ -     ********************
+10/14/2024 11:45:52 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 11:45:56 - INFO - __main__ -   epoch 0 step 800 loss 1.09734
+10/14/2024 11:46:28 - INFO - __main__ -   epoch 0 step 900 loss 0.93028
+10/14/2024 11:47:01 - INFO - __main__ -   epoch 0 step 1000 loss 0.87501
+10/14/2024 11:47:34 - INFO - __main__ -   epoch 0 step 1100 loss 0.84499
+10/14/2024 11:47:58 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 11:47:58 - INFO - __main__ -     Num examples = 9604
+10/14/2024 11:47:58 - INFO - __main__ -     Batch size = 64
+10/14/2024 11:48:32 - INFO - __main__ -     eval_loss = 1.1101
+10/14/2024 11:48:32 - INFO - __main__ -     eval_mrr = 0.2746
+10/14/2024 11:48:32 - INFO - __main__ -     ********************
+10/14/2024 11:48:32 - INFO - __main__ -     Best mrr:0.2746
+10/14/2024 11:48:32 - INFO - __main__ -     ********************
+10/14/2024 11:48:37 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 11:48:43 - INFO - __main__ -   epoch 0 step 1200 loss 0.6964
+10/14/2024 11:49:16 - INFO - __main__ -   epoch 0 step 1300 loss 0.68638
+10/14/2024 11:49:49 - INFO - __main__ -   epoch 0 step 1400 loss 0.64936
+10/14/2024 11:50:19 - INFO - __main__ -   epoch 0 step 1500 loss 0.62103
+10/14/2024 11:50:44 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 11:50:44 - INFO - __main__ -     Num examples = 9604
+10/14/2024 11:50:44 - INFO - __main__ -     Batch size = 64
+10/14/2024 11:51:16 - INFO - __main__ -     eval_loss = 1.0172
+10/14/2024 11:51:16 - INFO - __main__ -     eval_mrr = 0.293
+10/14/2024 11:51:16 - INFO - __main__ -     ********************
+10/14/2024 11:51:16 - INFO - __main__ -     Best mrr:0.293
+10/14/2024 11:51:16 - INFO - __main__ -     ********************
+10/14/2024 11:51:21 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 11:51:31 - INFO - __main__ -   epoch 0 step 1600 loss 0.50996
+10/14/2024 11:52:02 - INFO - __main__ -   epoch 0 step 1700 loss 0.5199
+10/14/2024 11:52:35 - INFO - __main__ -   epoch 0 step 1800 loss 0.52478
+10/14/2024 11:53:07 - INFO - __main__ -   epoch 0 step 1900 loss 0.52525
+10/14/2024 11:53:27 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 11:53:27 - INFO - __main__ -     Num examples = 9604
+10/14/2024 11:53:27 - INFO - __main__ -     Batch size = 64
+10/14/2024 11:54:02 - INFO - __main__ -     eval_loss = 0.9779
+10/14/2024 11:54:02 - INFO - __main__ -     eval_mrr = 0.2932
+10/14/2024 11:54:02 - INFO - __main__ -     ********************
+10/14/2024 11:54:02 - INFO - __main__ -     Best mrr:0.2932
+10/14/2024 11:54:02 - INFO - __main__ -     ********************
+10/14/2024 11:54:06 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 11:54:17 - INFO - __main__ -   epoch 0 step 2000 loss 0.50405
+10/14/2024 11:54:48 - INFO - __main__ -   epoch 0 step 2100 loss 0.46578
+10/14/2024 11:55:20 - INFO - __main__ -   epoch 0 step 2200 loss 0.46627
+10/14/2024 11:55:53 - INFO - __main__ -   epoch 0 step 2300 loss 0.468
+10/14/2024 11:56:11 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 11:56:11 - INFO - __main__ -     Num examples = 9604
+10/14/2024 11:56:11 - INFO - __main__ -     Batch size = 64
+10/14/2024 11:56:45 - INFO - __main__ -     eval_loss = 0.949
+10/14/2024 11:56:45 - INFO - __main__ -     eval_mrr = 0.301
+10/14/2024 11:56:45 - INFO - __main__ -     ********************
+10/14/2024 11:56:45 - INFO - __main__ -     Best mrr:0.301
+10/14/2024 11:56:45 - INFO - __main__ -     ********************
+10/14/2024 11:56:49 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 11:57:02 - INFO - __main__ -   epoch 0 step 2400 loss 0.47477
+10/14/2024 11:57:35 - INFO - __main__ -   epoch 0 step 2500 loss 0.44565
+10/14/2024 11:58:08 - INFO - __main__ -   epoch 0 step 2600 loss 0.45253
+10/14/2024 11:58:38 - INFO - __main__ -   epoch 0 step 2700 loss 0.44488
+10/14/2024 11:58:56 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 11:58:56 - INFO - __main__ -     Num examples = 9604
+10/14/2024 11:58:56 - INFO - __main__ -     Batch size = 64
+10/14/2024 11:59:30 - INFO - __main__ -     eval_loss = 0.9063
+10/14/2024 11:59:30 - INFO - __main__ -     eval_mrr = 0.3062
+10/14/2024 11:59:30 - INFO - __main__ -     ********************
+10/14/2024 11:59:30 - INFO - __main__ -     Best mrr:0.3062
+10/14/2024 11:59:30 - INFO - __main__ -     ********************
+10/14/2024 11:59:36 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 11:59:51 - INFO - __main__ -   epoch 0 step 2800 loss 0.46397
+10/14/2024 12:00:23 - INFO - __main__ -   epoch 0 step 2900 loss 0.43676
+10/14/2024 12:00:54 - INFO - __main__ -   epoch 0 step 3000 loss 0.41207
+10/14/2024 12:01:27 - INFO - __main__ -   epoch 0 step 3100 loss 0.40481
+10/14/2024 12:01:40 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:01:40 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:01:40 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:02:14 - INFO - __main__ -     eval_loss = 0.9109
+10/14/2024 12:02:14 - INFO - __main__ -     eval_mrr = 0.3051
+10/14/2024 12:02:31 - INFO - __main__ -   epoch 0 step 3200 loss 0.40623
+10/14/2024 12:03:04 - INFO - __main__ -   epoch 0 step 3300 loss 0.40179
+10/14/2024 12:03:37 - INFO - __main__ -   epoch 0 step 3400 loss 0.3943
+10/14/2024 12:04:08 - INFO - __main__ -   epoch 0 step 3500 loss 0.38736
+10/14/2024 12:04:21 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:04:21 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:04:21 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:04:53 - INFO - __main__ -     eval_loss = 0.926
+10/14/2024 12:04:53 - INFO - __main__ -     eval_mrr = 0.3043
+10/14/2024 12:05:14 - INFO - __main__ -   epoch 0 step 3600 loss 0.38876
+10/14/2024 12:05:47 - INFO - __main__ -   epoch 0 step 3700 loss 0.38759
+10/14/2024 12:06:18 - INFO - __main__ -   epoch 0 step 3800 loss 0.3857
+10/14/2024 12:06:50 - INFO - __main__ -   epoch 0 step 3900 loss 0.38542
+10/14/2024 12:07:00 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:07:00 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:07:00 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:07:34 - INFO - __main__ -     eval_loss = 0.9156
+10/14/2024 12:07:34 - INFO - __main__ -     eval_mrr = 0.306
+10/14/2024 12:08:06 - INFO - __main__ -   epoch 1 step 100 loss 0.35558
+10/14/2024 12:08:39 - INFO - __main__ -   epoch 1 step 200 loss 0.34094
+10/14/2024 12:09:12 - INFO - __main__ -   epoch 1 step 300 loss 0.34167
+10/14/2024 12:09:39 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:09:39 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:09:39 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:10:13 - INFO - __main__ -     eval_loss = 0.8756
+10/14/2024 12:10:13 - INFO - __main__ -     eval_mrr = 0.3063
+10/14/2024 12:10:13 - INFO - __main__ -     ********************
+10/14/2024 12:10:13 - INFO - __main__ -     Best mrr:0.3063
+10/14/2024 12:10:13 - INFO - __main__ -     ********************
+10/14/2024 12:10:19 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 12:10:22 - INFO - __main__ -   epoch 1 step 400 loss 0.35815
+10/14/2024 12:10:55 - INFO - __main__ -   epoch 1 step 500 loss 0.3357
+10/14/2024 12:11:26 - INFO - __main__ -   epoch 1 step 600 loss 0.3397
+10/14/2024 12:11:58 - INFO - __main__ -   epoch 1 step 700 loss 0.33921
+10/14/2024 12:12:25 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:12:25 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:12:25 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:12:57 - INFO - __main__ -     eval_loss = 0.849
+10/14/2024 12:12:57 - INFO - __main__ -     eval_mrr = 0.3183
+10/14/2024 12:12:57 - INFO - __main__ -     ********************
+10/14/2024 12:12:57 - INFO - __main__ -     Best mrr:0.3183
+10/14/2024 12:12:57 - INFO - __main__ -     ********************
+10/14/2024 12:13:01 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 12:13:07 - INFO - __main__ -   epoch 1 step 800 loss 0.34125
+10/14/2024 12:13:39 - INFO - __main__ -   epoch 1 step 900 loss 0.30341
+10/14/2024 12:14:12 - INFO - __main__ -   epoch 1 step 1000 loss 0.30717
+10/14/2024 12:14:43 - INFO - __main__ -   epoch 1 step 1100 loss 0.31028
+10/14/2024 12:15:07 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:15:07 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:15:07 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:15:42 - INFO - __main__ -     eval_loss = 0.8536
+10/14/2024 12:15:42 - INFO - __main__ -     eval_mrr = 0.3242
+10/14/2024 12:15:42 - INFO - __main__ -     ********************
+10/14/2024 12:15:42 - INFO - __main__ -     Best mrr:0.3242
+10/14/2024 12:15:42 - INFO - __main__ -     ********************
+10/14/2024 12:15:46 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 12:15:54 - INFO - __main__ -   epoch 1 step 1200 loss 0.32655
+10/14/2024 12:16:26 - INFO - __main__ -   epoch 1 step 1300 loss 0.31437
+10/14/2024 12:16:57 - INFO - __main__ -   epoch 1 step 1400 loss 0.32637
+10/14/2024 12:17:29 - INFO - __main__ -   epoch 1 step 1500 loss 0.33019
+10/14/2024 12:17:51 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:17:51 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:17:51 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:18:23 - INFO - __main__ -     eval_loss = 0.8381
+10/14/2024 12:18:23 - INFO - __main__ -     eval_mrr = 0.3201
+10/14/2024 12:18:35 - INFO - __main__ -   epoch 1 step 1600 loss 0.33938
+10/14/2024 12:19:06 - INFO - __main__ -   epoch 1 step 1700 loss 0.335
+10/14/2024 12:19:38 - INFO - __main__ -   epoch 1 step 1800 loss 0.32691
+10/14/2024 12:20:11 - INFO - __main__ -   epoch 1 step 1900 loss 0.31902
+10/14/2024 12:20:29 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:20:29 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:20:29 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:21:03 - INFO - __main__ -     eval_loss = 0.8318
+10/14/2024 12:21:03 - INFO - __main__ -     eval_mrr = 0.3215
+10/14/2024 12:21:16 - INFO - __main__ -   epoch 1 step 2000 loss 0.30104
+10/14/2024 12:21:48 - INFO - __main__ -   epoch 1 step 2100 loss 0.31238
+10/14/2024 12:22:21 - INFO - __main__ -   epoch 1 step 2200 loss 0.31846
+10/14/2024 12:22:52 - INFO - __main__ -   epoch 1 step 2300 loss 0.31606
+10/14/2024 12:23:10 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:23:10 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:23:10 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:23:45 - INFO - __main__ -     eval_loss = 0.8307
+10/14/2024 12:23:45 - INFO - __main__ -     eval_mrr = 0.3243
+10/14/2024 12:23:45 - INFO - __main__ -     ********************
+10/14/2024 12:23:45 - INFO - __main__ -     Best mrr:0.3243
+10/14/2024 12:23:45 - INFO - __main__ -     ********************
+10/14/2024 12:23:49 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 12:24:04 - INFO - __main__ -   epoch 1 step 2400 loss 0.33108
+10/14/2024 12:24:36 - INFO - __main__ -   epoch 1 step 2500 loss 0.31393
+10/14/2024 12:25:07 - INFO - __main__ -   epoch 1 step 2600 loss 0.31575
+10/14/2024 12:25:40 - INFO - __main__ -   epoch 1 step 2700 loss 0.32028
+10/14/2024 12:25:54 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:25:54 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:25:54 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:26:28 - INFO - __main__ -     eval_loss = 0.8167
+10/14/2024 12:26:28 - INFO - __main__ -     eval_mrr = 0.3226
+10/14/2024 12:26:46 - INFO - __main__ -   epoch 1 step 2800 loss 0.30704
+10/14/2024 12:27:17 - INFO - __main__ -   epoch 1 step 2900 loss 0.3022
+10/14/2024 12:27:50 - INFO - __main__ -   epoch 1 step 3000 loss 0.30713
+10/14/2024 12:28:22 - INFO - __main__ -   epoch 1 step 3100 loss 0.31182
+10/14/2024 12:28:34 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:28:34 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:28:34 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:29:08 - INFO - __main__ -     eval_loss = 0.8179
+10/14/2024 12:29:08 - INFO - __main__ -     eval_mrr = 0.3249
+10/14/2024 12:29:08 - INFO - __main__ -     ********************
+10/14/2024 12:29:08 - INFO - __main__ -     Best mrr:0.3249
+10/14/2024 12:29:08 - INFO - __main__ -     ********************
+10/14/2024 12:29:13 - INFO - __main__ -   Saving model checkpoint to ..//saved_models/longcoder/checkpoint-best-mrr/model.bin
+10/14/2024 12:29:31 - INFO - __main__ -   epoch 1 step 3200 loss 0.3203
+10/14/2024 12:30:04 - INFO - __main__ -   epoch 1 step 3300 loss 0.31761
+10/14/2024 12:30:36 - INFO - __main__ -   epoch 1 step 3400 loss 0.32268
+10/14/2024 12:31:07 - INFO - __main__ -   epoch 1 step 3500 loss 0.31826
+10/14/2024 12:31:17 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:31:17 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:31:17 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:31:51 - INFO - __main__ -     eval_loss = 0.8172
+10/14/2024 12:31:51 - INFO - __main__ -     eval_mrr = 0.3242
+10/14/2024 12:32:14 - INFO - __main__ -   epoch 1 step 3600 loss 0.30664
+10/14/2024 12:32:45 - INFO - __main__ -   epoch 1 step 3700 loss 0.30141
+10/14/2024 12:33:18 - INFO - __main__ -   epoch 1 step 3800 loss 0.29906
+10/14/2024 12:33:50 - INFO - __main__ -   epoch 1 step 3900 loss 0.30272
+10/14/2024 12:33:58 - INFO - __main__ -   ***** Running evaluation *****
+10/14/2024 12:33:58 - INFO - __main__ -     Num examples = 9604
+10/14/2024 12:33:58 - INFO - __main__ -     Batch size = 64
+10/14/2024 12:34:32 - INFO - __main__ -     eval_loss = 0.8198
+10/14/2024 12:34:32 - INFO - __main__ -     eval_mrr = 0.3241
