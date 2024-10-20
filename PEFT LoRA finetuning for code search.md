@@ -8,22 +8,24 @@ Using the run.py script in the Siamese-model for finetuning Roberta model. But t
 lora_config = LoraConfig(
         r=16,
         lora_alpha=32,
-        target_modules=["q_proj", "v_proj"],  # RoBERTa attention layers to apply LoRA
+        target_modules=["q_proj", "v_proj"],
         lora_dropout=0.1
     )
 ```
 ### Variables to change during training
-- LoRA rank 
-- LoRA alpha
-- batch_size overall = 64
+- [x] LoRA rank and alpha (alpha / rank ratio is generally set to 2) (set rank to 8, alpha to 16)
+- [x] batch_size overall = 64
 - number of workers = 4
-- gradient accumulation steps
+- model type (available options:` 'gpt2', 'openai-gpt', 'bert', 'roberta', 'distilbert'`)
+- gradient accumulation steps (only helps with memory constraints)
 - training optimizer config
 - training scheduler config
 - Learning rate
-- fp16 (currently not set)
-- multinode-multi GPU training using `DistributedDataParallel` (already happening)
+- [x] fp16 (currently not set)
+- [x] multinode-multi GPU training using `DistributedDataParallel` (already happening)
 - block_size (changes code token and padding length of both NL and PL)
+## Apex command
+`pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation --config-settings "--build-option=--cpp_ext" --config-settings "--build-option=--cuda_ext" ./` [this](https://github.com/huggingface/accelerate/pull/1689/commits/3cf93f773f2f625197da7c61e6ae640f86721a78) and [this references](https://github.com/NVIDIA/apex/pull/1690/commits/b34aedc7430a3b7671a4ec9ce0bdf83e5b6716ef)
 # Initial training (with LoRA) summary
 ```
 10/05/2024 19:35:12 - INFO - ***** Running training *****
@@ -39,6 +41,30 @@ trainable params: 589,824 || all params: 125,235,456 || trainable%: 0.4710
 - eval loss decreased drastically from 15.7 to 0.176 by 3900 step
 - took about 1hr25 mins for 1 epoch, 64 batch size with LoRA.
 - best MRR is 0.3065 (max Python can get is 0.42)
+## 2 epochs
+![[Pasted image 20241007012712.png]]
+- best MRR - 0.3389
+- ran for 2hr 50 mins (without fp16, )
+# 2 epochs 8 rank
+```
+10/08/2024 20:21:11 - INFO - __main__ -   ***** Running evaluation *****
+10/08/2024 20:21:11 - INFO - __main__ -     Num examples = 9604
+10/08/2024 20:21:11 - INFO - __main__ -     Batch size = 64
+10/08/2024 20:22:40 - INFO - __main__ -     eval_loss = 0.8312
+10/08/2024 20:22:40 - INFO - __main__ -     eval_mrr = 0.3263
+```
+best mrr = 0.3267
+2hr50 mins
+# 2 epochs 32 rank 
+```
+10/09/2024 12:50:43 - INFO - __main__ -   ***** Running evaluation *****
+10/09/2024 12:50:43 - INFO - __main__ -     Num examples = 9604
+10/09/2024 12:50:43 - INFO - __main__ -     Batch size = 64
+10/09/2024 12:52:12 - INFO - __main__ -     eval_loss = 0.7731
+10/09/2024 12:52:12 - INFO - __main__ -     eval_mrr = 0.3469
+10/09/2024 12:52:12 - INFO - __main__ -     ********************
+10/09/2024 12:52:12 - INFO - __main__ -     Best mrr:0.3469
+```
 # Initial training (without LoRA) summary
 ```
 10/05/2024 17:14:35 -    ***** Running training *****
