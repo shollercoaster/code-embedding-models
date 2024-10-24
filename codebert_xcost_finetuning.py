@@ -17,6 +17,7 @@ from retrieval_utils import calculate_mrr_at_step, construct_database_and_perfor
 import torch
 from torch.utils.data import DataLoader, SequentialSampler, DistributedSampler
 import numpy as np
+import torch.nn.functional as F
 
 def get_model():
     model = RobertaModel.from_pretrained('microsoft/codebert-base')
@@ -43,6 +44,7 @@ training_args = TrainingArguments(
     warmup_steps=1000,
     save_strategy="epoch"
 )
+
 def evaluate(args, model, tokenizer, eval_when_training=False):
     eval_output_dir = args.output_dir
     if not os.path.exists(eval_output_dir) and args.local_rank in [-1, 0]:
@@ -62,38 +64,37 @@ def evaluate(args, model, tokenizer, eval_when_training=False):
     nb_eval_steps = 0
     model.eval()
     code_vecs = []
-    nl_vecs = []
     
     for batch in eval_dataloader:
         code_inputs = batch[0].to(args.device)
-        nl_inputs = batch[1].to(args.device)
         with torch.no_grad():
-            lm_loss, code_vec, nl_vec = model(code_inputs, nl_inputs)
+            lm_loss, code_vec = model(code_inputs)
             eval_loss += lm_loss.mean().item()
             code_vecs.append(code_vec.cpu().numpy())
-            nl_vecs.append(nl_vec.cpu().numpy())
         nb_eval_steps += 1
 
     code_vecs = np.concatenate(code_vecs, 0)
-    nl_vecs = np.concatenate(nl_vecs, 0)
     eval_loss = eval_loss / nb_eval_steps
 
-    scores = np.matmul(nl_vecs, code_vecs.T)
-    ranks = []
-    for i in range(len(scores)):
-        score = scores[i, i]
-        rank = 1
-        for j in range(len(scores)):
-            if i != j and scores[i, j] >= score:
-                rank += 1
-        ranks.append(1 / rank)
+    mrr = calculate_mrr(code_vecs)
 
     result = {
         "eval_loss": eval_loss,
-        "eval_mrr": np.mean(ranks)
+        "eval_mrr": mrr
     }
 
     return result
+
+def calculate_mrr(code_vecs):
+    ranks = []
+    for i in range(len(code_vecs)):
+        score = F.cosine_similarity(torch.tensor(code_vecs[i]), torch.tensor(code_vecs))
+        score[i] = -100  # Exclude the query itself from scoring
+        sorted_indices = torch.argsort(score, descending=True)
+        rank = (sorted_indices == i).nonzero(as_tuple=True)[0].item() + 1
+        ranks.append(1 / rank)
+
+    return np.mean(ranks)
 
 class ContrastiveTrainerWithMRR(ContrastiveTrainer):
     def evaluate_model(self):
