@@ -66,7 +66,8 @@ def evaluate(args, model, tokenizer, eval_when_training=False):
     code_vecs = []
     
     for batch in eval_dataloader:
-        code_inputs = batch[0].to(args.device)
+        print(batch.keys())
+        code_inputs = batch.to(args.device)
         with torch.no_grad():
             lm_loss, code_vec = model(code_inputs)
             eval_loss += lm_loss.mean().item()
@@ -112,8 +113,9 @@ class ContrastiveTrainerWithMRR(ContrastiveTrainer):
 
         # Perform training step
         output = model(**valid_inputs)
-        output = model(**inputs)
         '''
+        # output = model(**inputs)
+        
         # Save embeddings and evaluation
         step = self.state.global_step
         
