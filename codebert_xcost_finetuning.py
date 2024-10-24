@@ -118,16 +118,16 @@ def calculate_mrr(code_vecs_query, code_vecs_relevant):
 
 class ContrastiveTrainerWithMRR(ContrastiveTrainer):
     def forward(self, input_ids, attention_mask, input_ids_relevant=None, attention_mask_relevant=None):
-    # Process query code input
+        # Process query code input
         query_output = self.roberta(input_ids=input_ids, attention_mask=attention_mask)
 
-    # Optionally, process relevant code input separately
+        # Optionally, process relevant code input separately
         if input_ids_relevant is not None:
             relevant_output = self.roberta(input_ids=input_ids_relevant, attention_mask=attention_mask_relevant)
         else:
             relevant_output = None
 
-    # Return both query and relevant outputs
+        # Return both query and relevant outputs
         return query_output, relevant_output
 
     def evaluate_model(self):
