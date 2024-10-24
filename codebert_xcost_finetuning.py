@@ -19,6 +19,29 @@ from torch.utils.data import DataLoader, SequentialSampler, DistributedSampler
 import numpy as np
 import torch.nn.functional as F
 
+class CustomRobertaModel(RobertaModel):
+    def forward(self, input_ids_query=None, attention_mask_query=None, input_ids_relevant=None, attention_mask_relevant=None, **kwargs):
+        # Process query inputs
+        query_outputs = None
+        if input_ids_query is not None:
+            query_outputs = self.roberta(
+                input_ids=input_ids_query,
+                attention_mask=attention_mask_query,
+                **kwargs
+            )
+        
+        # Process relevant inputs
+        relevant_outputs = None
+        if input_ids_relevant is not None:
+            relevant_outputs = self.roberta(
+                input_ids=input_ids_relevant,
+                attention_mask=attention_mask_relevant,
+                **kwargs
+            )
+        
+        return query_outputs, relevant_outputs
+
+
 def get_model():
     model = RobertaModel.from_pretrained('microsoft/codebert-base')
     tokenizer = RobertaTokenizer.from_pretrained('microsoft/codebert-base')
@@ -117,19 +140,6 @@ def calculate_mrr(code_vecs_query, code_vecs_relevant):
     return np.mean(ranks)
 
 class ContrastiveTrainerWithMRR(ContrastiveTrainer):
-    def forward(self, input_ids, attention_mask, input_ids_relevant=None, attention_mask_relevant=None):
-        # Process query code input
-        query_output = self.roberta(input_ids=input_ids, attention_mask=attention_mask)
-
-        # Optionally, process relevant code input separately
-        if input_ids_relevant is not None:
-            relevant_output = self.roberta(input_ids=input_ids_relevant, attention_mask=attention_mask_relevant)
-        else:
-            relevant_output = None
-
-        # Return both query and relevant outputs
-        return query_output, relevant_output
-
     def evaluate_model(self):
         # Call the evaluate function during evaluation
         eval_results = evaluate(training_args, model, tokenizer)
