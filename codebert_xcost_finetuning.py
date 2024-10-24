@@ -102,8 +102,14 @@ class ContrastiveTrainerWithMRR(ContrastiveTrainer):
         print(f"Evaluation results - MRR: {eval_results['eval_mrr']}, Loss: {eval_results['eval_loss']}")
 
     def training_step(self, model, inputs):
+        valid_inputs = {
+        "input_ids": inputs.get("input_ids"),
+        "attention_mask": inputs.get("attention_mask"),
+        "token_type_ids": inputs.get("token_type_ids", None)  # If your model expects these
+        }
+
         # Perform training step
-        output = model(**inputs)
+        output = model(**valid_inputs)
         
         # Save embeddings and evaluation
         step = self.state.global_step
