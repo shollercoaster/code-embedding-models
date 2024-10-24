@@ -67,11 +67,24 @@ def evaluate(args, model, tokenizer, eval_when_training=False):
     code_vecs_relevant = []
     
     for batch in eval_dataloader:
-        code_inputs_query = batch['query_code'].to(args.device)  # Input for query_code
-        code_inputs_relevant = batch['relevant_code'].to(args.device)  # Input for relevant_code
-        
+        query_code_tokens = tokenizer(batch['query_code'], return_tensors='pt', padding=True, truncation=True, max_length=512)
+        relevant_code_tokens = tokenizer(batch['relevant_code'], return_tensors='pt', padding=True, truncation=True, max_length=512)
+
+        code_inputs_query = query_code_tokens['input_ids'].to(args.device)
+        query_attention_mask = query_code_tokens['attention_mask'].to(args.device)
+
+        code_inputs_relevant = relevant_code_tokens['input_ids'].to(args.device)
+        relevant_attention_mask = relevant_code_tokens['attention_mask'].to(args.device)
+
+
         with torch.no_grad():
-            lm_loss, code_vec_query, code_vec_relevant = model(code_inputs_query, code_inputs_relevant)
+            lm_loss, code_vec_query, code_vec_relevant = model(
+                input_ids=code_inputs_query, 
+                attention_mask=query_attention_mask,
+                input_ids_relevant=code_inputs_relevant,
+                attention_mask_relevant=relevant_attention_mask
+            )
+
             eval_loss += lm_loss.mean().item()
             code_vecs_query.append(code_vec_query.cpu().numpy())
             code_vecs_relevant.append(code_vec_relevant.cpu().numpy())
@@ -104,14 +117,44 @@ def calculate_mrr(code_vecs_query, code_vecs_relevant):
     return np.mean(ranks)
 
 class ContrastiveTrainerWithMRR(ContrastiveTrainer):
+    def forward(self, input_ids, attention_mask, input_ids_relevant=None, attention_mask_relevant=None):
+    # Process query code input
+        query_output = self.roberta(input_ids=input_ids, attention_mask=attention_mask)
+
+    # Optionally, process relevant code input separately
+        if input_ids_relevant is not None:
+            relevant_output = self.roberta(input_ids=input_ids_relevant, attention_mask=attention_mask_relevant)
+        else:
+            relevant_output = None
+
+    # Return both query and relevant outputs
+        return query_output, relevant_output
+
     def evaluate_model(self):
         # Call the evaluate function during evaluation
         eval_results = evaluate(training_args, model, tokenizer)
         print(f"Evaluation results - MRR: {eval_results['eval_mrr']}, Loss: {eval_results['eval_loss']}")
 
     def training_step(self, model, inputs):
-        print(inputs)
-        output = model(**inputs)
+        query_input_ids = inputs['query']['input_ids']
+        query_attention_mask = inputs['query']['attention_mask']
+        
+        relevant_input_ids = inputs['relevant']['input_ids']
+        relevant_attention_mask = inputs['relevant']['attention_mask']
+        
+        # Prepare the inputs for the model
+        query_inputs = {
+            'input_ids': query_input_ids,
+            'attention_mask': query_attention_mask,
+        }
+        relevant_inputs = {
+            'input_ids': relevant_input_ids,
+            'attention_mask': relevant_attention_mask,
+        }
+        labels = inputs['labels']  # Ensure labels are also on the right device
+        
+        query_output = model(**query_inputs)
+        relevant_outputs = model(**relevant_inputs)
         
         # Save embeddings and evaluation
         step = self.state.global_step
