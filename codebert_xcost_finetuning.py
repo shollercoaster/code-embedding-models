@@ -50,12 +50,12 @@ def evaluate(args, model, tokenizer, eval_when_training=False):
 
     # Create eval dataset and dataloader
     eval_dataset = dataset["val"]
-    eval_sampler = SequentialSampler(eval_dataset) if args.local_rank == -1 else DistributedSampler(eval_dataset)
+    eval_sampler = SequentialSampler(eval_dataset)
     eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
     # Multi-GPU support
-    if args.n_gpu > 1 and eval_when_training is False:
-        model = torch.nn.DataParallel(model)
+    # if args.n_gpu > 1 and eval_when_training is False:
+    #    model = torch.nn.DataParallel(model)
 
     print("***** Running evaluation *****")
     eval_loss = 0.0
@@ -102,6 +102,7 @@ class ContrastiveTrainerWithMRR(ContrastiveTrainer):
         print(f"Evaluation results - MRR: {eval_results['eval_mrr']}, Loss: {eval_results['eval_loss']}")
 
     def training_step(self, model, inputs):
+        '''
         valid_inputs = {
             "input_ids": inputs.get("input_ids"),
             "attention_mask": inputs.get("attention_mask"),
@@ -110,7 +111,8 @@ class ContrastiveTrainerWithMRR(ContrastiveTrainer):
 
         # Perform training step
         output = model(**valid_inputs)
-        
+        output = model(**inputs)
+        '''
         # Save embeddings and evaluation
         step = self.state.global_step
         
