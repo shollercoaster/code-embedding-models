@@ -63,21 +63,27 @@ def evaluate(args, model, tokenizer, eval_when_training=False):
     eval_loss = 0.0
     nb_eval_steps = 0
     model.eval()
-    code_vecs = []
+    code_vecs_query = []
+    code_vecs_relevant = []
     
     for batch in eval_dataloader:
-        print(batch.keys())
-        code_inputs = batch.to(args.device)
+        code_inputs_query = batch['query_code'].to(args.device)  # Input for query_code
+        code_inputs_relevant = batch['relevant_code'].to(args.device)  # Input for relevant_code
+        
         with torch.no_grad():
-            lm_loss, code_vec = model(code_inputs)
+            lm_loss, code_vec_query, code_vec_relevant = model(code_inputs_query, code_inputs_relevant)
             eval_loss += lm_loss.mean().item()
-            code_vecs.append(code_vec.cpu().numpy())
+            code_vecs_query.append(code_vec_query.cpu().numpy())
+            code_vecs_relevant.append(code_vec_relevant.cpu().numpy())
+        
         nb_eval_steps += 1
 
-    code_vecs = np.concatenate(code_vecs, 0)
+    code_vecs_query = np.concatenate(code_vecs_query, 0)
+    code_vecs_relevant = np.concatenate(code_vecs_relevant, 0)
     eval_loss = eval_loss / nb_eval_steps
 
-    mrr = calculate_mrr(code_vecs)
+    # Calculate MRR
+    mrr = calculate_mrr(code_vecs_query, code_vecs_relevant)
 
     result = {
         "eval_loss": eval_loss,
@@ -86,10 +92,10 @@ def evaluate(args, model, tokenizer, eval_when_training=False):
 
     return result
 
-def calculate_mrr(code_vecs):
+def calculate_mrr(code_vecs_query, code_vecs_relevant):
     ranks = []
-    for i in range(len(code_vecs)):
-        score = F.cosine_similarity(torch.tensor(code_vecs[i]), torch.tensor(code_vecs))
+    for i in range(len(code_vecs_query)):
+        score = F.cosine_similarity(torch.tensor(code_vecs_query[i]), torch.tensor(code_vecs_relevant))
         score[i] = -100  # Exclude the query itself from scoring
         sorted_indices = torch.argsort(score, descending=True)
         rank = (sorted_indices == i).nonzero(as_tuple=True)[0].item() + 1
@@ -104,17 +110,8 @@ class ContrastiveTrainerWithMRR(ContrastiveTrainer):
         print(f"Evaluation results - MRR: {eval_results['eval_mrr']}, Loss: {eval_results['eval_loss']}")
 
     def training_step(self, model, inputs):
-        '''
-        valid_inputs = {
-            "input_ids": inputs.get("input_ids"),
-            "attention_mask": inputs.get("attention_mask"),
-            "token_type_ids": inputs.get("token_type_ids", None)  # If your model expects these
-        }
-
-        # Perform training step
-        output = model(**valid_inputs)
-        '''
-        # output = model(**inputs)
+        print(inputs)
+        output = model(**inputs)
         
         # Save embeddings and evaluation
         step = self.state.global_step
