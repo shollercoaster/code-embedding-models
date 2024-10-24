@@ -103,9 +103,9 @@ class ContrastiveTrainerWithMRR(ContrastiveTrainer):
 
     def training_step(self, model, inputs):
         valid_inputs = {
-        "input_ids": inputs.get("input_ids"),
-        "attention_mask": inputs.get("attention_mask"),
-        "token_type_ids": inputs.get("token_type_ids", None)  # If your model expects these
+            "input_ids": inputs.get("input_ids"),
+            "attention_mask": inputs.get("attention_mask"),
+            "token_type_ids": inputs.get("token_type_ids", None)  # If your model expects these
         }
 
         # Perform training step
