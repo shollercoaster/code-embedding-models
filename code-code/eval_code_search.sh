@@ -22,7 +22,7 @@ done
 
 exp=code2code
 exp_path=${code2codesearch_path}
-data_path=XLCoST_data/
-evaluator_path=${exp_path}evaluator/
+data_path=${root_path}XLCoST_data/retrieval/code2code_search/
+evaluator_path=${exp_path}/
 
 run;
