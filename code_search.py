@@ -199,9 +199,8 @@ def collate_fn(
     )
 
     collated_batch = {
-        "input_ids": concatenated_tensor["input_ids"],
-        "attention_mask": concatenated_tensor["attention_mask"],
-        "labels": torch.tensor(range(len(concatenated_sequences)), dtype=torch.long),
+        "input_ids": concatenated_tensor["input_ids"].cuda(),
+        "attention_mask": concatenated_tensor["attention_mask"].cuda(),
     }
 
     return collated_batch
