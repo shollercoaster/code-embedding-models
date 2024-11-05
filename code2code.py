@@ -2,6 +2,7 @@ from transformers import RobertaTokenizer, RobertaModel
 import json
 from tqdm import tqdm
 import torch
+from torch.nn.functional import cosine_similarity
 
 def get_model():
     model = RobertaModel.from_pretrained('microsoft/codebert-base')
@@ -54,19 +55,22 @@ def generate_predictions_jsonl(model, tokenizer, test_dataset, collate_fn, outpu
     for item in tqdm(test_dataset, desc="Generating predictions"):
         batch = [item]
         inputs = collate_fn(batch, tokenizer)
+
         with torch.no_grad():
             outputs = model(**inputs)
+            embeddings = outputs.last_hidden_state[:, 0, :]  # Assuming we take the [CLS] token
             # Compute similarity scores between query and code embeddings
-            similarity_scores = torch.matmul(outputs, outputs.T)  # Adjust similarity calculation as needed
-            
-            for i, score in enumerate(similarity_scores):
+            # similarity_scores = torch.matmul(outputs, outputs.T)  # Adjust similarity calculation as needed
+            batch_scores = cosine_similarity(embeddings, embeddings)
+
+            for i, score in enumerate(batch_scores):
                 # Sort indices based on similarity scores
-                sorted_indices = torch.argsort(score, descending=True).cpu().tolist()
+                sorted_indices = torch.argsort(score, descending=True).cuda().tolist()
                 
                 # Convert indices to prediction format, e.g., URLs or IDs
                 predictions.append({
-                    "url": batch[i]["url"],  # Assuming each item has a "url" key
-                    "answers": [test_dataset[j]["url"] for j in sorted_indices]
+                    "data_idx": batch[i]["data_idx"],  # Assuming each item has a "url" key
+                    "answers": [batch_scores[i].item()]
                 })
     
     # Write to predictions.jsonl
