@@ -101,11 +101,11 @@ def evaluate(args, model, tokenizer, eval_when_training=False):
 
 
         with torch.no_grad():
-            lm_loss, code_vec_query, code_vec_relevant = model(
+            lm_loss, code_vec_query = model(
                 input_ids=code_inputs_query, 
                 attention_mask=query_attention_mask,
-                input_ids_relevant=code_inputs_relevant,
-                attention_mask_relevant=relevant_attention_mask
+                # input_ids_relevant=code_inputs_relevant,
+                # attention_mask_relevant=relevant_attention_mask
             )
 
             eval_loss += lm_loss.mean().item()
@@ -164,7 +164,7 @@ class ContrastiveTrainerWithMRR(ContrastiveTrainer):
         labels = inputs['labels']  # Ensure labels are also on the right device
         
         query_output = model(**query_inputs)
-        relevant_outputs = model(**relevant_inputs)
+        #relevant_outputs = model(**relevant_inputs)
         
         # Save embeddings and evaluation
         step = self.state.global_step
