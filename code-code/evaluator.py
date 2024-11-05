@@ -31,8 +31,8 @@ def calculate_scores(answers,predictions):
         query_scores = []
         flag = False
         for rank,idx in enumerate(predictions[key]):
-            prediction_prefix = idx.split("/")[0]
-            if prediction_prefix==answers[key].split("/")[0]:
+            # prediction_prefix = idx.split("/")[0]
+            if idx==answers[key].split("/")[0]:
                 query_scores.append(1/(rank+1))
                 flag = True
         if flag is False:
@@ -54,8 +54,8 @@ def precison_atk(answers, predictions, k=6):
         iterator_count = 0
         flag = False
         for rank, idx in enumerate(predictions[key]):
-            prediction_prefix = idx.split("/")[0]
-            if prediction_prefix==answers[key].split("/")[0]:
+            # prediction_prefix = idx.split("/")[0]
+            if idx==answers[key].split("/")[0]:
                 precision_count += 1
                 flag = True
             iterator_count += 1

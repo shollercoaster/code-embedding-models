@@ -14,7 +14,7 @@ for datatype in "${datatypes[@]}"; do
         echo exp_name
         for lang1 in "${langs[@]}"; do
             echo $lang1
-            python3 ${evaluator_path}evaluator.py -a ${data_folder}$lang1/test.jsonl  -p ${exp_path}${exp_name}/$lang1/predictions.jsonl 
+            python3 ${evaluator_path}evaluator.py -a ${data_folder}$lang1/test.jsonl  -p ../predictions.jsonl 
         done
     done
 done
