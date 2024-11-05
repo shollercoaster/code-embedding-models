@@ -10,7 +10,7 @@ def read_answers(filename):
         for line in f:
             line=line.strip()
             js=json.loads(line)
-            answers[js['data_idx']]=js['idx']
+            answers[js['idx']]=js['idx']
     return answers
 
 def read_predictions(filename):
