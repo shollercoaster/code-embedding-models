@@ -181,17 +181,17 @@ def collate_fn(
     query_codes = [item["query_code"] for item in unique_items]
     relevant_codes = [item["relevant_code"] for item in unique_items]
     
+    # Concatenate 'query_code' and 'relevant_code' for each item with a separator
+    concatenated_sequences = [
+        f"{item['query_code']} {tokenizer.sep_token} {item['relevant_code']}"
+        for item in unique_items
+    ]
+
     # do tokenization
 
-    query_codes_tensor = tokenizer(
-        query_codes,
-        truncation=True,
-        max_length=512,
-        padding="longest",
-        return_tensors="pt",
-    )
-    relevant_codes_tensor = tokenizer(
-        relevant_codes,
+    # Tokenize the concatenated sequences
+    concatenated_tensor = tokenizer(
+        concatenated_sequences,
         truncation=True,
         max_length=512,
         padding="longest",
@@ -199,9 +199,9 @@ def collate_fn(
     )
 
     collated_batch = {
-        "query": query_codes_tensor,
-        "relevant": relevant_codes_tensor,
-        "labels": torch.tensor(range(len(query_codes)), dtype=torch.long),
+        "input_ids": concatenated_tensor["input_ids"],
+        "attention_mask": concatenated_tensor["attention_mask"],
+        "labels": torch.tensor(range(len(concatenated_sequences)), dtype=torch.long),
     }
 
     return collated_batch
