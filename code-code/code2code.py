@@ -3,7 +3,7 @@ import sys
 import json
 from tqdm import tqdm
 import torch
-from code_search import get_dataset, collate_fn, ContrastiveTrainer
+from code_search import get_dataset, collate_fn, collate_fn_concatenated, ContrastiveTrainer
 from transformers import RobertaTokenizer, RobertaModel, TrainingArguments
 from torch.nn.functional import cosine_similarity
 
@@ -17,7 +17,7 @@ def get_model():
 model, tokenizer = get_model()
 
 languages = ["C", "PHP", "Java", "C++", "C#", "Javascript", "Python"]
-root_path = "XLCoST_data"
+root_path = "xlcost_data"
 
 dataset = get_dataset(root_path=root_path, languages=languages)
 
@@ -31,7 +31,8 @@ training_args = TrainingArguments(
     report_to="none",
     remove_unused_columns=False,
     warmup_steps=1000,
-    save_strategy="epoch"
+    save_strategy="epoch",
+    dataloader_pin_memory=False
 )
 trainer = ContrastiveTrainer(
     model,
@@ -41,7 +42,7 @@ trainer = ContrastiveTrainer(
     data_collator=lambda x: collate_fn(x, tokenizer),
 )
 
-trainer.train()
+# trainer.train()
 
 def generate_predictions_jsonl(model, tokenizer, test_dataset, output_file="predictions.jsonl"):
     """
@@ -59,7 +60,7 @@ def generate_predictions_jsonl(model, tokenizer, test_dataset, output_file="pred
     
     for item in tqdm(test_dataset, desc="Generating predictions"):
         batch = [item]
-        inputs = collate_fn(batch, tokenizer)
+        inputs = collate_fn_concatenated(batch, tokenizer)
 
         with torch.no_grad():
             outputs = model(**inputs)
@@ -77,12 +78,12 @@ def generate_predictions_jsonl(model, tokenizer, test_dataset, output_file="pred
             f.write(json.dumps(pred) + "\n")
     print(f"Predictions saved to {output_file}")
 
-base_path = "XLCoST_data/retrieval/code2code_search"
+base_path = 'xlcost_data/retrieval/code2code_search'
 levels = ["program_level", "snippet_level"]
-languages = ["C", "C++", "C#", "Java", "Javascript", "PHP", "Python"]
+# languages = ["C", "C++", "C#", "Java", "Javascript", "PHP", "Python"]
 
 for level in levels:
     for language in languages:
-        test_dataset = get_dataset(level=level, language=language, split="test")
+        test_dataset = get_dataset(root_path=root_path, languages=language)["test"]
         output_file = f"{base_path}/{level}/{language}/predictions.jsonl"
         generate_predictions_jsonl(model, tokenizer, test_dataset, output_file)
