@@ -148,8 +148,56 @@ def get_dataset(root_path: str, languages: List[str]) -> DatasetDict:
     )
     return combined_dataset
 
-
 def collate_fn(
+    batch: List[Dict[str, Any]], tokenizer: PreTrainedTokenizer
+) -> Dict[str, Any]:
+    """
+    Collates a batch of data for training a model with anchor and positive code sequences.
+    Args:
+        batch (List[Dict[str, Any]]): A batch of data where each item is a dictionary containing
+            "anchor_code" (str) and "positive_code" (str).
+        tokenizer (PreTrainedTokenizer): A tokenizer instance from the transformers library.
+    Returns:
+        Dict[str, Any]: A dictionary with tokenized "query" and "relevant" code sequences, and "labels".
+            - "query" (Dict[str, torch.Tensor]): Tokenized anchor codes.
+            - "relevant" (Dict[str, torch.Tensor]): Tokenized positive codes.
+            - "labels" (torch.Tensor): Tensor of labels corresponding to the indices of the batch items.
+    """
+    # remove another codes with same id even from another language
+    # this is to make sure we are don't push semnatically close
+    # but from diferent language and not from 'targed_language'
+    unique_src_ids = set()
+    unique_items = []
+    for item in batch:
+        if item["src_id"] not in unique_src_ids:
+            unique_src_ids.add(item["src_id"])
+            unique_items.append(item)
+    query_codes = [item["query_code"] for item in unique_items]
+    relevant_codes = [item["relevant_code"] for item in unique_items]
+    
+    # do tokenization
+    query_codes_tensor = tokenizer(
+        query_codes,
+        truncation=True,
+        max_length=512,
+        padding="longest",
+        return_tensors="pt",
+    )
+    relevant_codes_tensor = tokenizer(
+        relevant_codes,
+        truncation=True,
+        max_length=512,
+        padding="longest",
+        return_tensors="pt",
+    )
+    collated_batch = {
+        "query": query_codes_tensor,
+        "relevant": relevant_codes_tensor,
+        "labels": torch.tensor(range(len(query_codes)), dtype=torch.long),
+    }
+    return collated_batch
+
+def collate_fn_concatenated(
     batch: List[Dict[str, Any]], tokenizer: PreTrainedTokenizer
 ) -> Dict[str, Any]:
     """
@@ -196,11 +244,11 @@ def collate_fn(
         max_length=512,
         padding="longest",
         return_tensors="pt",
-    )
+    ).cuda()
 
     collated_batch = {
-        "input_ids": concatenated_tensor["input_ids"].cuda(),
-        "attention_mask": concatenated_tensor["attention_mask"].cuda(),
+        "input_ids": concatenated_tensor["input_ids"],
+        "attention_mask": concatenated_tensor["attention_mask"],
     }
 
     return collated_batch
