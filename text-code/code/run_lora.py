@@ -143,13 +143,6 @@ def set_seed(seed=42):
 def train(args, train_dataset, model, tokenizer):
     """ Train the model with LoRA adaptation """
     
-    lora_config = LoraConfig(
-        r=32,
-        lora_alpha=64,
-        target_modules=["query", "value"],
-        lora_dropout=0.1
-    )
-    
     # model = get_peft_model(model, lora_config)
     # model.print_trainable_parameters()
     
@@ -575,8 +568,15 @@ def main():
                                             cache_dir=args.cache_dir if args.cache_dir else None)    
     else:
         model = model_class(config)
+    
+    lora_config = LoraConfig(
+        r=32,
+        lora_alpha=64,
+        target_modules=["query", "value"],
+        lora_dropout=0.1
+    )
 
-    model.add_adapter(adapter_name="graphcodebert-text2code-lora-r32")
+    model.add_adapter(lora_config, adapter_name="graphcodebert-text2code-lora-r32")
     model.set_adapter("graphcodebert-text2code-lora-r32")
 
     model=Model(model,config,tokenizer,args)
