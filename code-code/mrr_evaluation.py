@@ -34,14 +34,16 @@ def create_dataset(data):
                 "idx": item["idx"]} for item in data]
     return CodeEmbeddingDataset(dataset)
 
-def compute_embeddings(model, tokenizer, tokens):
+def compute_embeddings(model, tokenizer, tokens, max_length=128):
     """
     Convert tokens into embeddings using a code embedding model.
     """
-    inputs = tokenizer(tokens, padding=True, truncation=True, return_tensors="pt")
+    inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="max_length",
+                       truncation=True, max_length=max_length)
     with torch.no_grad():
         outputs = model(**inputs)
-    return outputs.last_hidden_state.mean(dim=1)
+        embeddings = outputs.last_hidden_state.mean(dim=1)
+    return embeddings
 
 def evaluate_mrr(model, tokenizer, dataset):
     """
@@ -123,7 +125,7 @@ def contrast_evaluation(query_embeds, code_embeds, ground_truth_indices):
     }
     return eval_result
 
-def main_evaluation_script(file_path, model_name="microsoft/codebert-base", batch_size=1):
+def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_length=128):
     """
     Main evaluation script to compute R@1, R@5, R@10, and MRR for a code2code search task.
     
@@ -131,6 +133,7 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", batc
     - file_path (str): Path to the test JSONL file.
     - model_name (str): Pre-trained model name for the tokenizer and model.
     - batch_size (int): Batch size for DataLoader.
+    - max_length (int): Maximum sequence length for token embeddings.
     """
     data = load_data_from_jsonl(file_path)
     
@@ -143,8 +146,8 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", batc
     ground_truth_indices = []
 
     for idx, entry in enumerate(tqdm(data, desc="Generating embeddings")):
-        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"]).squeeze(0)
-        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"]).squeeze(0)
+        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"], max_length=max_length).squeeze(0)
+        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"], max_length=max_length).squeeze(0)
 
         query_embeddings.append(query_embedding)
         code_embeddings.append(code_embedding)
