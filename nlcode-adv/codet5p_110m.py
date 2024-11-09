@@ -35,7 +35,7 @@ def get_feats(model, tokenizer, data_loader, max_length, device, desc='Get feats
 @torch.no_grad()
 def contrast_evaluation(text_embeds, code_embeds, img2txt):
     score_matrix_i2t = text_embeds @ code_embeds.t()
-    scores_i2t = score_matrix_i2t.numpy()
+    scores_i2t = score_matrix_i2t.cpu().numpy()
 
 
     ranks = np.ones(scores_i2t.shape[0]) * -1
@@ -57,7 +57,7 @@ def contrast_evaluation(text_embeds, code_embeds, img2txt):
 
 print("\nCreating retrieval dataset")
 #change language and path to dataset here
-_, _, test_dataset, code_dataset = create_dataset('dataset/CSN', 'ruby')
+_, _, test_dataset, code_dataset = create_dataset('dataset/CSN', 'python')
 
 test_loader, code_loader = create_loader([test_dataset, code_dataset], [None, None],
                                              batch_size=[256, 256],
