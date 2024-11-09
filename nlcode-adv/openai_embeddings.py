@@ -13,7 +13,7 @@ from data_utils import create_dataset, create_loader
 
 import openai
 #enter openai api key
-openai.api_key = ("sk-OIXQ2Ix4eJ6S2DrcXPb7RA6XCuX6rVHSb714DPGsmDT3BlbkFJb-lbJtMAqjYT2YP73wvvD08qGll2MxoEdl5VR7qYIA")
+openai.api_key = ("")
 
 from openai.embeddings_utils import get_embedding, cosine_similarity
 
