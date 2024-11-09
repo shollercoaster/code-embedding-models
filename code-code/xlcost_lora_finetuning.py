@@ -23,9 +23,11 @@ def get_model():
         lora_dropout=0.1
     )
     
-    model = get_peft_model(model, lora_config)
-    
-    model.print_trainable_parameters()
+    # model = get_peft_model(model, lora_config)
+    model.add_adapter(lora_config, adapter_name="codebert-code2code-lora-r16")
+    model.set_adapter("codebert-code2code-lora-r16")
+
+    # model.print_trainable_parameters()
     return model, tokenizer
 
 model, tokenizer = get_model()
@@ -34,7 +36,7 @@ import sys
 from code_search import get_dataset, collate_fn, ContrastiveTrainer
 
 languages = ["C", "PHP", "Java", "C++", "C#", "Javascript", "Python"]
-root_path = "XLCoST_data"
+root_path = "../XLCoST_data"
 
 
 dataset = get_dataset(root_path=root_path, languages=languages)
@@ -63,5 +65,9 @@ trainer = ContrastiveTrainer(
     eval_dataset=dataset["val"],
     data_collator=lambda x: collate_fn(x, tokenizer),
 )
+
+print("active adapter before training: ", model.active_adapters())
+
 trainer.train()
 
+model.push_to_hub("codebert-code2code-lora-r16")
