@@ -133,6 +133,6 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", batc
 
 
 if __name__ == "__main__":
-    test_file_path = " xlcost_data/retrieval/code2code_search/program_level/C/test.jsonl"
+    test_file_path = "../xlcost_data/retrieval/code2code_search/program_level/C/test.jsonl"
     model_name = "microsoft/codebert-base"
     avg_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name)
