@@ -84,6 +84,6 @@ levels = ["program_level", "snippet_level"]
 
 for level in levels:
     for language in languages:
-        test_dataset = get_dataset(root_path=root_path, languages=language)["test"]
+        test_dataset = dataset["test"]
         output_file = f"{base_path}/{level}/{language}/predictions.jsonl"
         generate_predictions_jsonl(model, tokenizer, test_dataset, output_file)

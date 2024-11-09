@@ -25,14 +25,16 @@ def read_predictions(filename):
 def calculate_scores(answers,predictions):
     scores=[]
     for key in answers:
+        print(key)
         if key not in predictions:
             logging.error("Missing prediction for data_idx {}.".format(key))
             sys.exit()
         query_scores = []
         flag = False
         for rank,idx in enumerate(predictions[key]):
-            # prediction_prefix = idx.split("/")[0]
-            if idx==answers[key].split("/")[0]:
+            print(rank, idx)
+            prediction_prefix = idx.split("/")[0]
+            if prediction_prefix==answers[key].split("/")[0]:
                 query_scores.append(1/(rank+1))
                 flag = True
         if flag is False:
