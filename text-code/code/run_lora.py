@@ -150,9 +150,10 @@ def train(args, train_dataset, model, tokenizer):
         lora_dropout=0.1
     )
     
-    model = get_peft_model(model, lora_config)
-    
-    model.print_trainable_parameters()
+    # model = get_peft_model(model, lora_config)
+    model.add_adapter(adapter_name="graphcodebert-text2code-lora-r32")
+    model.set_adapter("graphcodebert-text2code-lora-r32")
+    # model.print_trainable_parameters()
     
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
     train_sampler = RandomSampler(train_dataset) if args.local_rank == -1 else DistributedSampler(train_dataset)
@@ -226,6 +227,7 @@ def train(args, train_dataset, model, tokenizer):
             code_inputs = batch[0].to(args.device)    
             nl_inputs = batch[1].to(args.device)
 
+            print("active adapter before training: ", model.active_adapters())
             model.train()
             loss,code_vec,nl_vec = model(code_inputs,nl_inputs)
 
@@ -593,6 +595,8 @@ def main():
             torch.distributed.barrier()
 
         train(args, train_dataset, model, tokenizer)
+
+        model.push_to_hub("graphcodebert-text2code-lora-r32")
 
 
 

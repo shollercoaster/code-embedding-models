@@ -1,5 +1,5 @@
 cd code
-data_dir=/workspace/text-code
+data_dir=../
 python run_lora.py \
     --output_dir=$data_dir/saved_models \
     --model_type=roberta \
