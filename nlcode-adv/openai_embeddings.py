@@ -13,7 +13,7 @@ from data_utils import create_dataset, create_loader
 
 import openai
 #enter openai api key
-openai.api_key = ("")
+openai.api_key = ("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")
 
 from openai.embeddings_utils import get_embedding, cosine_similarity
 
@@ -65,7 +65,7 @@ def contrast_evaluation(text_embeds, code_embeds, img2txt):
 
 print("\nCreating retrieval dataset")
 #change language and path to dataset here
-_, _, test_dataset, code_dataset = create_dataset('dataset', 'ruby')
+_, _, test_dataset, code_dataset = create_dataset('dataset/CSN', 'ruby')
 
 test_loader, code_loader = create_loader([test_dataset, code_dataset], [None, None],
                                          batch_size=[128, 128],
