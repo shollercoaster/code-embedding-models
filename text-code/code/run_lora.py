@@ -151,8 +151,6 @@ def train(args, train_dataset, model, tokenizer):
     )
     
     # model = get_peft_model(model, lora_config)
-    model.add_adapter(adapter_name="graphcodebert-text2code-lora-r32")
-    model.set_adapter("graphcodebert-text2code-lora-r32")
     # model.print_trainable_parameters()
     
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
@@ -578,6 +576,9 @@ def main():
     else:
         model = model_class(config)
 
+    model.add_adapter(adapter_name="graphcodebert-text2code-lora-r32")
+    model.set_adapter("graphcodebert-text2code-lora-r32")
+
     model=Model(model,config,tokenizer,args)
     if args.local_rank == 0:
         torch.distributed.barrier()  # End of barrier to make sure only the first process in distributed training download model & vocab
@@ -597,7 +598,6 @@ def main():
         train(args, train_dataset, model, tokenizer)
 
         model.push_to_hub("graphcodebert-text2code-lora-r32")
-
 
 
     # Evaluation
