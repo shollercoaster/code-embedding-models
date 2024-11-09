@@ -90,9 +90,42 @@ def load_data_from_jsonl(file_path):
             })
     return data
 
+def contrast_evaluation(query_embeds, code_embeds, ground_truth_indices):
+    """
+    Evaluates MRR and top-k accuracy (R@1, R@5, R@10) based on similarity scores.
+
+    Parameters:
+    - query_embeds (torch.Tensor): Query embeddings.
+    - code_embeds (torch.Tensor): Relevant code embeddings.
+    - ground_truth_indices (list of int): List of indices indicating correct matches.
+
+    Returns:
+    - eval_result (dict): Dictionary containing R@1, R@5, R@10, and MRR metrics.
+    """
+    score_matrix = query_embeds @ code_embeds.T
+    scores = score_matrix.cpu().numpy()
+
+    ranks = np.ones(scores.shape[0]) * -1
+    for index, score in enumerate(scores):
+        inds = np.argsort(score)[::-1]
+        ranks[index] = np.where(inds == ground_truth_indices[index])[0][0]
+
+    tr1 = 100.0 * len(np.where(ranks < 1)[0]) / len(ranks)
+    tr5 = 100.0 * len(np.where(ranks < 5)[0]) / len(ranks)
+    tr10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
+    mrr = 100.0 * np.mean(1 / (ranks + 1))
+
+    eval_result = {
+        'r1': tr1,
+        'r5': tr5,
+        'r10': tr10,
+        'mrr': mrr
+    }
+    return eval_result
+
 def main_evaluation_script(file_path, model_name="microsoft/codebert-base", batch_size=1):
     """
-    Main evaluation script to compute the average MRR for a code2code search task.
+    Main evaluation script to compute R@1, R@5, R@10, and MRR for a code2code search task.
     
     Parameters:
     - file_path (str): Path to the test JSONL file.
@@ -105,31 +138,30 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", batc
     model = RobertaModel.from_pretrained(model_name)
     model.eval()  # Set to evaluation mode
     
-    dataset = create_dataset(data)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
-    
-    mrr_scores = []
-    
-    for batch in tqdm(dataloader, desc="Evaluating MRR"):
-        query_tokens = batch["query_tokens"][0]
-        relevant_tokens = batch["relevant_tokens"][0]
+    query_embeddings = []
+    code_embeddings = []
+    ground_truth_indices = []
 
-        query_embedding = compute_embeddings(model, tokenizer, query_tokens).squeeze(0)
+    for idx, entry in enumerate(tqdm(data, desc="Generating embeddings")):
+        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"]).squeeze(0)
+        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"]).squeeze(0)
 
-        relevant_embeddings = compute_embeddings(model, tokenizer, relevant_tokens)
+        query_embeddings.append(query_embedding)
+        code_embeddings.append(code_embedding)
+        ground_truth_indices.append(idx)  # In this case, the correct match is at the same index
 
-        similarities = torch.cosine_similarity(query_embedding, relevant_embeddings)
+    # Stack all embeddings for matrix operations
+    query_embeddings = torch.stack(query_embeddings)
+    code_embeddings = torch.stack(code_embeddings)
 
-        ranked_indices = torch.argsort(similarities, descending=True)
+    eval_result = contrast_evaluation(query_embeddings, code_embeddings, ground_truth_indices)
 
-        rank = (ranked_indices == 0).nonzero(as_tuple=True)[0].item() + 1
+    print(f"R@1: {eval_result['r1']:.2f}%")
+    print(f"R@5: {eval_result['r5']:.2f}%")
+    print(f"R@10: {eval_result['r10']:.2f}%")
+    print(f"MRR: {eval_result['mrr']:.2f}%")
 
-        mrr_scores.append(1 / rank)
-
-    avg_mrr = np.mean(mrr_scores)
-    print(f"Final Average MRR: {avg_mrr:.4f}")
-
-    return avg_mrr
+    return eval_result
 
 
 if __name__ == "__main__":
