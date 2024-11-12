@@ -218,7 +218,7 @@ def train(args, train_dataset, model, tokenizer):
             code_inputs = batch[0].to(args.device)    
             nl_inputs = batch[1].to(args.device)
 
-            print("active adapter before training: ", model.active_adapters())
+            # print("active adapter before training: ", model.active_adapters())
             model.train()
             loss,code_vec,nl_vec = model(code_inputs,nl_inputs)
 
@@ -578,6 +578,7 @@ def main():
 
     model.add_adapter(lora_config, adapter_name="graphcodebert-text2code-lora-r32")
     model.set_adapter("graphcodebert-text2code-lora-r32")
+    print("active adapter before training: ", model.active_adapters())
 
     model=Model(model,config,tokenizer,args)
     if args.local_rank == 0:

@@ -34,15 +34,14 @@ def create_dataset(data):
                 "idx": item["idx"]} for item in data]
     return CodeEmbeddingDataset(dataset)
 
-def compute_embeddings(model, tokenizer, tokens, max_length=128):
+def compute_embeddings(model, tokenizer, tokens):
     """
     Convert tokens into embeddings using a code embedding model.
     """
-    inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="max_length",
-                       truncation=True, max_length=max_length)
+    inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="True")
     with torch.no_grad():
         outputs = model(**inputs)
-        embeddings = outputs.last_hidden_state.mean(dim=1)
+        embeddings = outputs.last_hidden_state[:, 0, :]
     return embeddings
 
 def evaluate_mrr(model, tokenizer, dataset):
@@ -146,8 +145,8 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     ground_truth_indices = []
 
     for idx, entry in enumerate(tqdm(data, desc="Generating embeddings")):
-        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"], max_length=max_length).squeeze(0)
-        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"], max_length=max_length).squeeze(0)
+        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"]).squeeze(0)
+        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"]).squeeze(0)
 
         query_embeddings.append(query_embedding)
         code_embeddings.append(code_embedding)
@@ -168,6 +167,6 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
 
 
 if __name__ == "__main__":
-    test_file_path = "../xlcost_data/retrieval/code2code_search/program_level/C/test.jsonl"
+    test_file_path = "../xlcost_data/retrieval/code2code_search/program_level/Python/test.jsonl"
     model_name = "microsoft/codebert-base"
     avg_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name)
