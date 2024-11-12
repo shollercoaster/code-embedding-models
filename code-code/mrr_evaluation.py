@@ -4,6 +4,7 @@ from transformers import RobertaTokenizer, RobertaModel
 from tqdm import tqdm
 import numpy as np
 import json
+from code_search import get_pooled_embeds
 
 class CodeEmbeddingDataset(Dataset):
     def __init__(self, data):
@@ -39,9 +40,11 @@ def compute_embeddings(model, tokenizer, tokens):
     Convert tokens into embeddings using a code embedding model.
     """
     inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="True")
+    print(type(inputs), inputs)
     with torch.no_grad():
         outputs = model(**inputs)
-        embeddings = outputs.last_hidden_state[:, 0, :]
+        print(type(outputs), outputs)
+        embeddings = get_pooled_embeds(model, inputs, field="query")
     return embeddings
 
 def evaluate_mrr(model, tokenizer, dataset):
