@@ -15,6 +15,7 @@ from datasets import Dataset, DatasetDict
 import torch.nn.functional as F
 from transformers import AutoModel, AutoTokenizer
 from torch.utils.data import DataLoader
+from peft import LoraConfig
 
 from transformers import RobertaTokenizer, RobertaModel
 
@@ -28,17 +29,27 @@ def get_dataset(root_path, languages, split):
         data_path = os.path.join(root_path, lang, f"{split}.jsonl")
         data_list = load_jsonl(data_path)
 
-    merged_examples = []
-    for lang, examples in data_list.items():
-        merged_examples.extend(examples)
+    # merged_examples = []
+    # for lang, examples in data_list.items():
+        # merged_examples.extend(examples)
 
-    torch_dataset = CustomDataset(merged_examples)
+    torch_dataset = CustomDataset(data_list)
 
     return torch_dataset
 
 def get_model():
     model = AutoModel.from_pretrained('microsoft/graphcodebert-base')
     tokenizer = AutoTokenizer.from_pretrained('microsoft/graphcodebert-base')
+    lora_config = LoraConfig(
+        r=16,
+        lora_alpha=32,
+        target_modules=["query", "value"],
+        lora_dropout=0.1
+    )
+    
+    # model = get_peft_model(model, lora_config)
+    model.add_adapter(lora_config, adapter_name="graphcodebert-text2code-lora-r16")
+    model.set_adapter("graphcodebert-text2code-lora-r16")
     return model, tokenizer
 
 def collate_fn(batch, tokenizer):
@@ -78,6 +89,7 @@ def _get_pooled_embeds(model, batch, field):
     pooled_embeds = torch.sum(embeds * in_mask, 1) / torch.clamp(
         in_mask.sum(1), min=1e-6
     )
+    # print(field, ": ", pooled_embeds.shape)
     return pooled_embeds
 
 class ContrastiveTrainer(Trainer):
@@ -85,12 +97,12 @@ class ContrastiveTrainer(Trainer):
     def compute_loss(self, model, batch, return_outputs=False):
         a = _get_pooled_embeds(model, batch, field="anchor")
         p = _get_pooled_embeds(model, batch, field="positive")
-        assert a.shape == (8, 768)
-        assert p.shape == (8, 768)
+        # assert a.shape == (16, 768)
+        # assert p.shape == (16, 768)
         scores = torch.stack(
             [F.cosine_similarity(a_i.reshape(1, a_i.shape[0]), p, eps=1e-6) for a_i in a]
         )
-        assert scores.shape == (8,8)
+        # assert scores.shape == (16,16)
         loss = F.cross_entropy(scores * 5, batch["labels"])
         return (loss, scores) if return_outputs else loss
 
@@ -110,8 +122,8 @@ def run(model, tokenizer):
     trainer = ContrastiveTrainer(
         model,
         training_args,
-        train_dataset=get_dataset(root_path=root_path, languages=languages, "train"),
-        eval_dataset=get_dataset(root_path=root_path, languages=languages, "val"),
+        train_dataset=get_dataset(root_path=root_path, languages=languages, split="train"),
+        # eval_dataset=get_dataset(root_path=root_path, languages=languages, split="valid"),
         data_collator=lambda x: collate_fn(x, tokenizer),
     )
     trainer.train()
@@ -120,3 +132,4 @@ model, tokenizer = get_model()
 
 run(model, tokenizer)
 
+model.push_to_hub("graphcodebert-text2code-lora-r16")
