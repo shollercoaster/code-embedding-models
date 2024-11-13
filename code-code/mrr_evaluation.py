@@ -4,6 +4,7 @@ from transformers import RobertaTokenizer, RobertaModel
 from tqdm import tqdm
 import numpy as np
 import json
+from peft import PeftModel, PeftConfig
 from code_search import get_pooled_embeds
 
 class CodeEmbeddingDataset(Dataset):
@@ -141,7 +142,13 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     
     tokenizer = RobertaTokenizer.from_pretrained(model_name)
     model = RobertaModel.from_pretrained(model_name)
-    model.eval()  # Set to evaluation mode
+    peft_model = PeftModel(model, "codebert-code2code-lora-r16", adapter_name="code2code", is_trainable=True)
+    peft_model.eval()  # Set to evaluation mode
+    peft_model.set_adapter("pairings")
+
+    print(peft_model)
+
+    print("Active adapters: ", peft_model.active_adapters)
     
     query_embeddings = []
     code_embeddings = []
