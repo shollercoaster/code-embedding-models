@@ -7,23 +7,34 @@ Original file is located at
     https://colab.research.google.com/drive/1pX6v6qpL5uvsCIRh9siPPuDh0z7kvmHb
 """
 
-import json
+import os
 from transformers import Trainer, TrainingArguments
 
 import torch
 from datasets import Dataset, DatasetDict
 import torch.nn.functional as F
 from transformers import AutoModel, AutoTokenizer
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader
 
 from transformers import RobertaTokenizer, RobertaModel
 
-from code_search import get_dataset
+from search_utils import load_jsonl, CustomDataset 
 
 languages = ['ruby', 'go', 'php', 'python', 'java', 'javascript']
 root_path = "../../dataset/CSN"
 
-dataset = get_dataset(root_path=root_path, languages=languages)
+def get_dataset(root_path, languages, split):
+    for lang in languages:
+        data_path = os.path.join(root_path, lang, f"{split}.jsonl")
+        data_list = load_jsonl(data_path)
+
+    merged_examples = []
+    for lang, examples in data_list.items():
+        merged_examples.extend(examples)
+
+    torch_dataset = CustomDataset(merged_examples)
+
+    return torch_dataset
 
 def get_model():
     model = AutoModel.from_pretrained('microsoft/graphcodebert-base')
@@ -99,8 +110,8 @@ def run(model, tokenizer):
     trainer = ContrastiveTrainer(
         model,
         training_args,
-        train_dataset=dataset["train"],
-        eval_dataset=dataset["val"],
+        train_dataset=get_dataset(root_path=root_path, languages=languages, "train"),
+        eval_dataset=get_dataset(root_path=root_path, languages=languages, "val"),
         data_collator=lambda x: collate_fn(x, tokenizer),
     )
     trainer.train()
