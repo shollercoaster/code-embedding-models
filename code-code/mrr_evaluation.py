@@ -40,14 +40,25 @@ def compute_embeddings(model, tokenizer, tokens):
     """
     Convert tokens into embeddings using a code embedding model.
     """
-    inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="True")
-    print(type(inputs), inputs)
-    with torch.no_grad():
-        outputs = model(**inputs)
-        print(type(outputs), outputs)
-        embeddings = get_pooled_embeds(model, inputs, field="query")
-    return embeddings
+    inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="max_length", truncation=True)
+    # print(type(inputs), inputs)
+    # with torch.no_grad():
+        # outputs = model(**inputs)
+        # print(type(outputs), outputs)
+    ids = inputs["input_ids"]
+    mask = inputs["attention_mask"]
+    embeds = model(ids, attention_mask=mask)[0]
+    print("ids: ", ids.shape, "mask: ", mask.shape, "embeds: ", embeds.shape)
+    in_mask = mask.unsqueeze(-1).expand(embeds.size()).float()
 
+    # careful here, we only want to pool embedds when it is NOT padding
+
+    pooled_embeds = torch.sum(embeds * in_mask, 1) / torch.clamp(
+            in_mask.sum(1), min=1e-6
+    )
+    print("pooled_embeds: ", pooled_embeds.shape)
+    return pooled_embeds
+    
 def evaluate_mrr(model, tokenizer, dataset):
     """
     Evaluates the Mean Reciprocal Rank (MRR) for code2code search task.
@@ -141,10 +152,11 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     data = load_data_from_jsonl(file_path)
     
     tokenizer = RobertaTokenizer.from_pretrained(model_name)
+    print("Tokenizer max length: ", tokenizer.model_max_length)
     model = RobertaModel.from_pretrained(model_name)
-    peft_model = PeftModel(model, "codebert-code2code-lora-r16", adapter_name="code2code", is_trainable=True)
+    peft_model = PeftModel.from_pretrained(model, "schaturv/codebert-code2code-lora-r16", adapter_name="code2code")
     peft_model.eval()  # Set to evaluation mode
-    peft_model.set_adapter("pairings")
+    peft_model.set_adapter("code2code")
 
     print(peft_model)
 
