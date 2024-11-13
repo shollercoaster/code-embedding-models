@@ -18,31 +18,12 @@ from torch.utils.data import Dataset, DataLoader
 
 from transformers import RobertaTokenizer, RobertaModel
 
-# File path
-file_path = "../../dataset/CSN"
+from code_search import get_dataset
 
-# Read the JSON file
-with open(file_path, "r") as file:
-    data = json.load(file)
+languages = ['ruby', 'go', 'php', 'python', 'java', 'javascript']
+root_path = "../../dataset/CSN"
 
-print("Data for Go language: ", data["go"][0])
-
-merged_examples = []
-for lang, examples in data.items():
-    merged_examples.extend(examples)
-
-# Create a PyTorch dataset
-class CustomDataset(Dataset):
-    def __init__(self, data):
-        self.data = data
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        return tuple(self.data[idx])
-
-torch_dataset = CustomDataset(merged_examples)
+dataset = get_dataset(root_path=root_path, languages=languages)
 
 def get_model():
     model = AutoModel.from_pretrained('microsoft/graphcodebert-base')
@@ -118,7 +99,8 @@ def run(model, tokenizer):
     trainer = ContrastiveTrainer(
         model,
         training_args,
-        train_dataset=torch_dataset,
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["val"],
         data_collator=lambda x: collate_fn(x, tokenizer),
     )
     trainer.train()
