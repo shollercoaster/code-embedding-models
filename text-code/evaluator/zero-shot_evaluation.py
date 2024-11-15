@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 import torch
-from transformers import AutoTokenizer, AutoModel
+from transformers import RobertaTokenizer, RobertaModel
 from data_utils import create_dataset, create_loader
 from peft import PeftModel, PeftConfig
 
@@ -14,9 +14,14 @@ def get_feats(model, tokenizer, data_loader, max_length, device, desc='Get feats
     for text in tqdm(data_loader, total=len(data_loader), desc=desc):
         text_input = tokenizer(text, padding='max_length', truncation=True, max_length=max_length,
                                return_tensors="pt").to(device)
-        embed = model(text_input.input_ids, attention_mask=text_input.attention_mask)
-
-        embeds.append(embed)
+        ids = text_input["input_ids"]
+        mask = text_input["attention_mask"]
+        embed = model(ids, attention_mask=mask)[0]
+        in_mask = mask.unsqueeze(-1).expand(embed.size()).float() # embed = model(text_input.input_ids, attention_mask=text_input.attention_mask)
+        pooled_embeds = torch.sum(embed * in_mask, 1) / torch.clamp(
+                in_mask.sum(1), min=1e-6
+        )
+        embeds.append(pooled_embeds)
 
     embeds = torch.cat(embeds, dim=0)
 
@@ -48,14 +53,15 @@ def contrast_evaluation(text_embeds, code_embeds, img2txt):
 
 print("\nCreating retrieval dataset")
 #change language and path to dataset here
-_, _, test_dataset, code_dataset = create_dataset('../dataset/CSN', 'python')
+_, _, test_dataset, code_dataset = create_dataset('../../dataset/CSN', 'python')
 
 test_loader, code_loader = create_loader([test_dataset, code_dataset], [None, None],
                                              batch_size=[256, 256],
                                              num_workers=[4, 4], is_trains=[False, False], collate_fns=[None, None])
 
-tokenizer = AutoTokenizer.from_pretrained('microsoft/codebert', trust_remote_code=True)
-model = AutoModel.from_pretrained('microsoft/codebert', trust_remote_code=True)
+tokenizer = RobertaTokenizer.from_pretrained('microsoft/graphcodebert-base', trust_remote_code=True)
+model = RobertaModel.from_pretrained('microsoft/graphcodebert-base', trust_remote_code=True)
+
 peft_model = PeftModel.from_pretrained(model, "schaturv/graphcodebert-text2code-lora-r16", adapter_name="text2code")
 peft_model.eval()  # Set to evaluation mode
 peft_model.set_adapter("text2code")
@@ -66,8 +72,9 @@ print("Active adapters: ", peft_model.active_adapters)
 
 print('\nStart zero-shot evaluation...')
 device = torch.device('cuda')
-model = model.to(device)
+model = peft_model.to(device)
 model.eval()
+print("Active adapters: ", peft_model.active_adapters)
 
 text_embeds = get_feats(model, tokenizer, test_loader, 64, device, desc='Get text feats')
 code_embeds = get_feats(model, tokenizer, code_loader, 360, device, desc='Get code feats')
