@@ -1,4 +1,26 @@
+GraphCodeBERT:
 Base model results with dot product, max length padding and truncation, 64 and 360 text and code max lengths.
 Base model results with dot product, max length padding and truncation, 64 and 360 text and code max lengths.
 zero-shot test result: {'r1': 1.5618715645528891, 'r5': 3.8678106984850515, 'r10': 5.650891540420968, 'mrr': np.float64(3.057502016704444)}
+--------------
+Base model results with dot product, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 1.5618715645528891, 'r5': 3.8678106984850515, 'r10': 5.637484917549269, 'mrr': np.float64(3.0564464290971682)}
+--------------
+Base model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 6.381552486928543, 'r5': 13.88255798364392, 'r10': 18.440809760021452, 'mrr': np.float64(10.38444982385096)}
+--------------
+LoRA model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 7.943424051481432, 'r5': 16.490146132189302, 'r10': 21.209277383027217, 'mrr': np.float64(12.421562299896532)}
+----------------------------
+UniXCoder LoRA model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 21.72543236358761, 'r5': 38.08151226705993, 'r10': 45.213835634803594, 'mrr': np.float64(29.72556977122914)}
+--------------
+UniXCoder base model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 21.618179380614023, 'r5': 38.282611610135405, 'r10': 45.763507172543235, 'mrr': np.float64(29.762835794957876)}
+--------------
+CodeBERT base model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 0.02681324574339724, 'r5': 0.04692318005094517, 'r10': 0.06032980292264378, 'mrr': np.float64(0.06154488295701756)}
+--------------
+CodeBERT PEFT (rank 32) model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 0.040219868615095855, 'r5': 0.10054967153773964, 'r10': 0.15417616302453413, 'mrr': np.float64(0.09668444803065168)}
 --------------
