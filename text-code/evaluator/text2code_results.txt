@@ -1,0 +1,4 @@
+Base model results with dot product, max length padding and truncation, 64 and 360 text and code max lengths.
+Base model results with dot product, max length padding and truncation, 64 and 360 text and code max lengths.
+zero-shot test result: {'r1': 1.5618715645528891, 'r5': 3.8678106984850515, 'r10': 5.650891540420968, 'mrr': np.float64(3.057502016704444)}
+--------------

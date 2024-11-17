@@ -22,15 +22,17 @@ def get_feats(model, tokenizer, data_loader, max_length, device, desc='Get feats
                 in_mask.sum(1), min=1e-6
         )
         embeds.append(pooled_embeds)
-
+    print("before cat operation: ", type(embeds), type(embeds[0]), embeds[0].shape)
     embeds = torch.cat(embeds, dim=0)
-
+    print("after cat operation: ", type(embeds), type(embeds[0]), embeds[0].shape)
     return embeds
 
 
 @torch.no_grad()
 def contrast_evaluation(text_embeds, code_embeds, img2txt):
-    score_matrix_i2t = text_embeds @ code_embeds.t()
+    print(text_embeds.shape, text_embeds.t().shape, code_embeds.shape, code_embeds.t().shape)
+    
+    score_matrix_i2t = text_embeds @ code_embeds.t() # torch.nn.functional.cosine_similarity(text_embeds.t(), code_embeds.t())
     scores_i2t = score_matrix_i2t.cpu().numpy()
 
 
@@ -61,7 +63,7 @@ test_loader, code_loader = create_loader([test_dataset, code_dataset], [None, No
 
 tokenizer = RobertaTokenizer.from_pretrained('microsoft/graphcodebert-base', trust_remote_code=True)
 model = RobertaModel.from_pretrained('microsoft/graphcodebert-base', trust_remote_code=True)
-
+'''
 peft_model = PeftModel.from_pretrained(model, "schaturv/graphcodebert-text2code-lora-r16", adapter_name="text2code")
 peft_model.eval()  # Set to evaluation mode
 peft_model.set_adapter("text2code")
@@ -70,14 +72,20 @@ print(peft_model)
 
 print("Active adapters: ", peft_model.active_adapters)
 
+
+'''
 print('\nStart zero-shot evaluation...')
 device = torch.device('cuda')
-model = peft_model.to(device)
+model.to(device)
 model.eval()
-print("Active adapters: ", peft_model.active_adapters)
 
 text_embeds = get_feats(model, tokenizer, test_loader, 64, device, desc='Get text feats')
 code_embeds = get_feats(model, tokenizer, code_loader, 360, device, desc='Get code feats')
 test_result = contrast_evaluation(text_embeds, code_embeds, test_loader.dataset.text2code)
+
 print(f'\n====> zero-shot test result: ', test_result)
 
+with open('text2code_results.txt', "a") as file:
+    file.write("Base model results with dot product, max length padding and truncation, 64 and 360 text and code max lengths.\n")
+    file.write(f"zero-shot test result: {test_result}")
+    file.write('\n--------------\n')
