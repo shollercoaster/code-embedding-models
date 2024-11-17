@@ -1,4 +1,16 @@
-Base model results with dot product, max length padding and truncation.
-Base model results with dot product, max length padding and truncation.
+LoRA model results with dot product, max length padding and truncation.
+LoRA model results with dot product, max length padding and truncation.
 zero-shot test result: {'r1': 21.07448741240592, 'r5': 89.98183233843758, 'r10': 95.48403841162731, 'mrr': np.float64(45.79237080060247)}
+--------------
+LoRA model results with dot product, dataloader batch size 4, max length padding and truncation.
+zero-shot test result: {'r1': 21.07448741240592, 'r5': 89.98183233843758, 'r10': 95.48403841162731, 'mrr': np.float64(45.79237080060247)}
+--------------
+LoRA model results with dot product, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 21.07448741240592, 'r5': 89.98183233843758, 'r10': 95.48403841162731, 'mrr': np.float64(45.79237080060247)}
+--------------
+LoRA model results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 21.645471061510513, 'r5': 92.62912016610433, 'r10': 96.78172852322865, 'mrr': np.float64(46.88624341347705)}
+--------------
+Base model results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 8.616662341032962, 'r5': 34.33688035297171, 'r10': 45.05580067479886, 'mrr': np.float64(20.296499647283003)}
 --------------

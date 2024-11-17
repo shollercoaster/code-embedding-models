@@ -40,7 +40,7 @@ def compute_embeddings(model, tokenizer, tokens):
     """
     Convert tokens into embeddings using a code embedding model.
     """
-    inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="max_length", truncation=True)
+    inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="max_length", max_length=512, truncation=True)
     with torch.no_grad():
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
@@ -60,7 +60,7 @@ def evaluate_mrr(model, tokenizer, dataset):
     """
     Evaluates the Mean Reciprocal Rank (MRR) for code2code search task.
     """
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
+    dataloader = DataLoader(dataset, batch_size=4, shuffle=False)
     mrr_scores = []
 
     for batch in tqdm(dataloader, desc="Evaluating MRR"):
@@ -115,6 +115,8 @@ def contrast_evaluation(query_embeds, code_embeds, ground_truth_indices):
     Returns:
     - eval_result (dict): Dictionary containing R@1, R@5, R@10, and MRR metrics.
     """
+    query_embeds = torch.nn.functional.normalize(query_embeds, dim=1)  # Shape: [num_queries, embedding_dim]
+    code_embeds = torch.nn.functional.normalize(code_embeds, dim=1)
     score_matrix = query_embeds @ code_embeds.T # torch.nn.functional.cosine_similarity(query_embeds, code_embeds.T)
     scores = score_matrix.detach().numpy()
 
@@ -151,6 +153,7 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     tokenizer = RobertaTokenizer.from_pretrained(model_name)
     print("Tokenizer max length: ", tokenizer.model_max_length)
     model = RobertaModel.from_pretrained(model_name)
+    '''
     peft_model = PeftModel.from_pretrained(model, "schaturv/graphcodebert-code2code-lora-r16", adapter_name="code2code")
     peft_model.eval()  # Set to evaluation mode
     peft_model.set_adapter("code2code")
@@ -158,14 +161,14 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     print(peft_model)
 
     print("Active adapters: ", peft_model.active_adapters)
-    
+    '''
     query_embeddings = []
     code_embeddings = []
     ground_truth_indices = []
 
     for idx, entry in enumerate(tqdm(data, desc="Generating embeddings")):
-        query_embedding = compute_embeddings(peft_model, tokenizer, entry["docstring_tokens"]).squeeze(0)
-        code_embedding = compute_embeddings(peft_model, tokenizer, entry["code_tokens"]).squeeze(0)
+        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"]).squeeze(0)
+        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"]).squeeze(0)
 
         query_embeddings.append(query_embedding)
         code_embeddings.append(code_embedding)
@@ -183,7 +186,7 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     print(f"MRR: {eval_result['mrr']:.2f}%")
     
     with open('code2code_results.txt', "a") as file:
-        file.write("Base model results with dot product, max length padding and truncation.\n")
+        file.write("Base model results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.\n")
         file.write(f"zero-shot test result: {eval_result}")
         file.write('\n--------------\n')
     return eval_result
