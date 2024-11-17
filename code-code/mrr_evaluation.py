@@ -41,23 +41,20 @@ def compute_embeddings(model, tokenizer, tokens):
     Convert tokens into embeddings using a code embedding model.
     """
     inputs = tokenizer(" ".join(tokens), return_tensors="pt", padding="max_length", truncation=True)
-    # print(type(inputs), inputs)
-    # with torch.no_grad():
-        # outputs = model(**inputs)
-        # print(type(outputs), outputs)
-    ids = inputs["input_ids"]
-    mask = inputs["attention_mask"]
-    embeds = model(ids, attention_mask=mask)[0]
-    print("ids: ", ids.shape, "mask: ", mask.shape, "embeds: ", embeds.shape)
-    in_mask = mask.unsqueeze(-1).expand(embeds.size()).float()
+    with torch.no_grad():
+        ids = inputs["input_ids"]
+        mask = inputs["attention_mask"]
+        embeds = model(ids, attention_mask=mask)[0]
+        # print("ids: ", ids.shape, "mask: ", mask.shape, "embeds: ", embeds.shape)
+        in_mask = mask.unsqueeze(-1).expand(embeds.size()).float()
 
-    # careful here, we only want to pool embedds when it is NOT padding
+   
 
-    pooled_embeds = torch.sum(embeds * in_mask, 1) / torch.clamp(
-            in_mask.sum(1), min=1e-6
-    )
-    print("pooled_embeds: ", pooled_embeds.shape)
-    return pooled_embeds
+        pooled_embeds = torch.sum(embeds * in_mask, 1) / torch.clamp(
+                in_mask.sum(1), min=1e-6
+        )
+    # print("pooled_embeds: ", pooled_embeds.shape)
+        return pooled_embeds.cpu()
     
 def evaluate_mrr(model, tokenizer, dataset):
     """
@@ -118,8 +115,8 @@ def contrast_evaluation(query_embeds, code_embeds, ground_truth_indices):
     Returns:
     - eval_result (dict): Dictionary containing R@1, R@5, R@10, and MRR metrics.
     """
-    score_matrix = query_embeds @ code_embeds.T
-    scores = score_matrix.cpu().numpy()
+    score_matrix = query_embeds @ code_embeds.T # torch.nn.functional.cosine_similarity(query_embeds, code_embeds.T)
+    scores = score_matrix.detach().numpy()
 
     ranks = np.ones(scores.shape[0]) * -1
     for index, score in enumerate(scores):
@@ -154,7 +151,7 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     tokenizer = RobertaTokenizer.from_pretrained(model_name)
     print("Tokenizer max length: ", tokenizer.model_max_length)
     model = RobertaModel.from_pretrained(model_name)
-    peft_model = PeftModel.from_pretrained(model, "schaturv/codebert-code2code-lora-r16", adapter_name="code2code")
+    peft_model = PeftModel.from_pretrained(model, "schaturv/graphcodebert-code2code-lora-r16", adapter_name="code2code")
     peft_model.eval()  # Set to evaluation mode
     peft_model.set_adapter("code2code")
 
@@ -167,8 +164,8 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     ground_truth_indices = []
 
     for idx, entry in enumerate(tqdm(data, desc="Generating embeddings")):
-        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"]).squeeze(0)
-        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"]).squeeze(0)
+        query_embedding = compute_embeddings(peft_model, tokenizer, entry["docstring_tokens"]).squeeze(0)
+        code_embedding = compute_embeddings(peft_model, tokenizer, entry["code_tokens"]).squeeze(0)
 
         query_embeddings.append(query_embedding)
         code_embeddings.append(code_embedding)
@@ -184,11 +181,15 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     print(f"R@5: {eval_result['r5']:.2f}%")
     print(f"R@10: {eval_result['r10']:.2f}%")
     print(f"MRR: {eval_result['mrr']:.2f}%")
-
+    
+    with open('code2code_results.txt', "a") as file:
+        file.write("Base model results with dot product, max length padding and truncation.\n")
+        file.write(f"zero-shot test result: {eval_result}")
+        file.write('\n--------------\n')
     return eval_result
 
 
 if __name__ == "__main__":
     test_file_path = "../xlcost_data/retrieval/code2code_search/program_level/Python/test.jsonl"
-    model_name = "microsoft/codebert-base"
+    model_name = "microsoft/graphcodebert-base"
     avg_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name)
