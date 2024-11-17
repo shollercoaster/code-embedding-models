@@ -153,22 +153,26 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     tokenizer = RobertaTokenizer.from_pretrained(model_name)
     print("Tokenizer max length: ", tokenizer.model_max_length)
     model = RobertaModel.from_pretrained(model_name)
-    '''
-    peft_model = PeftModel.from_pretrained(model, "schaturv/graphcodebert-code2code-lora-r16", adapter_name="code2code")
+    
+    peft_model = PeftModel.from_pretrained(model, "schaturv/codebert-code2code-lora-r16", adapter_name="code2code")
     peft_model.eval()  # Set to evaluation mode
     peft_model.set_adapter("code2code")
 
     print(peft_model)
 
     print("Active adapters: ", peft_model.active_adapters)
-    '''
+    
+    # device = torch.device('cuda')
+    # model.to(device)
+    peft_model.eval()
+
     query_embeddings = []
     code_embeddings = []
     ground_truth_indices = []
 
     for idx, entry in enumerate(tqdm(data, desc="Generating embeddings")):
-        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"]).squeeze(0)
-        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"]).squeeze(0)
+        query_embedding = compute_embeddings(peft_model, tokenizer, entry["docstring_tokens"]).squeeze(0)
+        code_embedding = compute_embeddings(peft_model, tokenizer, entry["code_tokens"]).squeeze(0)
 
         query_embeddings.append(query_embedding)
         code_embeddings.append(code_embedding)
@@ -186,7 +190,7 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     print(f"MRR: {eval_result['mrr']:.2f}%")
     
     with open('code2code_results.txt', "a") as file:
-        file.write("Base model results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.\n")
+        file.write("CodeBERT PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.\n")
         file.write(f"zero-shot test result: {eval_result}")
         file.write('\n--------------\n')
     return eval_result
@@ -194,5 +198,5 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
 
 if __name__ == "__main__":
     test_file_path = "../xlcost_data/retrieval/code2code_search/program_level/Python/test.jsonl"
-    model_name = "microsoft/graphcodebert-base"
+    model_name = "microsoft/codebert-base"
     avg_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name)

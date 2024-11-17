@@ -14,3 +14,15 @@ zero-shot test result: {'r1': 21.645471061510513, 'r5': 92.62912016610433, 'r10'
 Base model results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
 zero-shot test result: {'r1': 8.616662341032962, 'r5': 34.33688035297171, 'r10': 45.05580067479886, 'mrr': np.float64(20.296499647283003)}
 --------------
+Base model results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 8.616662341032962, 'r5': 34.33688035297171, 'r10': 45.05580067479886, 'mrr': np.float64(20.296499647283003)}
+--------------
+UniXCoder Base model results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 22.216454710615103, 'r5': 87.20477549961069, 'r10': 95.89929924733974, 'mrr': np.float64(46.676652056101744)}
+--------------
+UniXCoder PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 22.034778094990916, 'r5': 94.57565533350636, 'r10': 98.20918764599014, 'mrr': np.float64(47.67113335909862)}
+--------------
+CodeBERT PEFT model (rank 16) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 16.013495977160655, 'r5': 66.49364131845316, 'r10': 77.34233065144043, 'mrr': np.float64(35.56670438936623)}
+--------------
