@@ -154,7 +154,7 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     print("Tokenizer max length: ", tokenizer.model_max_length)
     model = RobertaModel.from_pretrained(model_name)
     
-    peft_model = PeftModel.from_pretrained(model, "schaturv/codebert-code2code-lora-r16", adapter_name="code2code")
+    peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-code2code-r32", adapter_name="code2code")
     peft_model.eval()  # Set to evaluation mode
     peft_model.set_adapter("code2code")
 
@@ -190,7 +190,7 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     print(f"MRR: {eval_result['mrr']:.2f}%")
     
     with open('code2code_results.txt', "a") as file:
-        file.write("CodeBERT PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.\n")
+        file.write("CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.\n")
         file.write(f"zero-shot test result: {eval_result}")
         file.write('\n--------------\n')
     return eval_result
@@ -198,5 +198,5 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
 
 if __name__ == "__main__":
     test_file_path = "../xlcost_data/retrieval/code2code_search/program_level/Python/test.jsonl"
-    model_name = "microsoft/codebert-base"
+    model_name = "microsoft/graphcodebert-base"
     avg_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name)

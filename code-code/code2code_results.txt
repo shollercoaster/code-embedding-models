@@ -26,3 +26,9 @@ zero-shot test result: {'r1': 22.034778094990916, 'r5': 94.57565533350636, 'r10'
 CodeBERT PEFT model (rank 16) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
 zero-shot test result: {'r1': 16.013495977160655, 'r5': 66.49364131845316, 'r10': 77.34233065144043, 'mrr': np.float64(35.56670438936623)}
 --------------
+CodeBERT, GraphCodeBERT and UniXCoder (tokenizer) combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 22.19050090838308, 'r5': 87.28263690630678, 'r10': 95.8733454451077, 'mrr': np.float64(46.68146067192837)}
+--------------
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+zero-shot test result: {'r1': 22.060731897222944, 'r5': 93.30391902413703, 'r10': 97.92369582143785, 'mrr': np.float64(47.50544693123692)}
+--------------
