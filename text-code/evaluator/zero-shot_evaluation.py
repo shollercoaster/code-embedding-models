@@ -54,38 +54,42 @@ def contrast_evaluation(text_embeds, code_embeds, img2txt):
                    'mrr': mrr}
     return eval_result
 
-print("\nCreating retrieval dataset")
-#change language and path to dataset here
-_, _, test_dataset, code_dataset = create_dataset('../../dataset/CSN', 'python')
+def evaluation_script(language, model_name='microsoft/unixcoder-base'):
+    print("\nCreating retrieval dataset")
+    _, _, test_dataset, code_dataset = create_dataset('../../dataset/CSN', language)
 
-test_loader, code_loader = create_loader([test_dataset, code_dataset], [None, None],
-                                             batch_size=[256, 256],
-                                             num_workers=[4, 4], is_trains=[False, False], collate_fns=[None, None])
+    test_loader, code_loader = create_loader([test_dataset, code_dataset], [None, None],
+                                                batch_size=[256, 256],
+                                                num_workers=[4, 4], is_trains=[False, False], collate_fns=[None, None])
 
-tokenizer = RobertaTokenizer.from_pretrained('microsoft/unixcoder-base', trust_remote_code=True)
-model = RobertaModel.from_pretrained('microsoft/unixcoder-base', trust_remote_code=True)
+    tokenizer = RobertaTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    model = RobertaModel.from_pretrained(model_name, trust_remote_code=True)
 
-peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-text2code-r32", adapter_name="text2code")
-peft_model.eval()  # Set to evaluation mode
-peft_model.set_adapter("text2code")
+    peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-text2code-r32", adapter_name="text2code")
+    peft_model.eval()  # Set to evaluation mode
+    peft_model.set_adapter("text2code")
 
-print(peft_model)
+    print(peft_model)
 
-print("Active adapters: ", peft_model.active_adapters)
+    print("Active adapters: ", peft_model.active_adapters)
 
+    print('\nStart zero-shot evaluation...')
+    device = torch.device('cuda')
+    peft_model.to(device)
+    peft_model.eval()
 
-print('\nStart zero-shot evaluation...')
-device = torch.device('cuda')
-peft_model.to(device)
-peft_model.eval()
+    text_embeds = get_feats(peft_model, tokenizer, test_loader, 512, device, desc='Get text feats')
+    code_embeds = get_feats(peft_model, tokenizer, code_loader, 512, device, desc='Get code feats')
+    test_result = contrast_evaluation(text_embeds, code_embeds, test_loader.dataset.text2code)
 
-text_embeds = get_feats(peft_model, tokenizer, test_loader, 512, device, desc='Get text feats')
-code_embeds = get_feats(peft_model, tokenizer, code_loader, 512, device, desc='Get code feats')
-test_result = contrast_evaluation(text_embeds, code_embeds, test_loader.dataset.text2code)
+    print(f'\n====> zero-shot test result: ', test_result)
+    return test_result
 
-print(f'\n====> zero-shot test result: ', test_result)
-
-with open('text2code_results.txt', "a") as file:
-    file.write("GraphCodeBERT, CodeBERT, UniXCoder combined adapter (rank 32) model with UniXCoder tokenizer results with cosine similarity, max length padding and truncation, 512 text and code max lengths.\n")
-    file.write(f"zero-shot test result: {test_result}")
-    file.write('\n--------------\n')
+for language in ['ruby', 'go', 'php', 'python', 'java', 'javascript']:
+    test_result = evaluation_script(language, model_name='microsoft/unixcoder-base')
+    with open('text2code_combined_results.txt', "a") as file:
+        file.write("Combined Adapter Results ------------\n")
+        file.write(f"{language} results: \n")
+        file.write("CodeBERT PEFT (rank 32) model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.\n")
+        file.write(f"zero-shot test result: {test_result}")
+        file.write('\n--------------\n')
