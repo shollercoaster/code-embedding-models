@@ -62,10 +62,10 @@ test_loader, code_loader = create_loader([test_dataset, code_dataset], [None, No
                                              batch_size=[256, 256],
                                              num_workers=[4, 4], is_trains=[False, False], collate_fns=[None, None])
 
-tokenizer = RobertaTokenizer.from_pretrained('microsoft/codebert-base', trust_remote_code=True)
-model = RobertaModel.from_pretrained('microsoft/codebert-base', trust_remote_code=True)
+tokenizer = RobertaTokenizer.from_pretrained('microsoft/unixcoder-base', trust_remote_code=True)
+model = RobertaModel.from_pretrained('microsoft/unixcoder-base', trust_remote_code=True)
 
-peft_model = PeftModel.from_pretrained(model, "schaturv/codebert-text2code-lora-r32", adapter_name="text2code")
+peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-text2code-r32", adapter_name="text2code")
 peft_model.eval()  # Set to evaluation mode
 peft_model.set_adapter("text2code")
 
@@ -86,6 +86,6 @@ test_result = contrast_evaluation(text_embeds, code_embeds, test_loader.dataset.
 print(f'\n====> zero-shot test result: ', test_result)
 
 with open('text2code_results.txt', "a") as file:
-    file.write("CodeBERT PEFT (rank 32) model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.\n")
+    file.write("GraphCodeBERT, CodeBERT, UniXCoder combined adapter (rank 32) model with UniXCoder tokenizer results with cosine similarity, max length padding and truncation, 512 text and code max lengths.\n")
     file.write(f"zero-shot test result: {test_result}")
     file.write('\n--------------\n')

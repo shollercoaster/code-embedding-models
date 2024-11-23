@@ -24,3 +24,6 @@ zero-shot test result: {'r1': 0.02681324574339724, 'r5': 0.04692318005094517, 'r
 CodeBERT PEFT (rank 32) model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
 zero-shot test result: {'r1': 0.040219868615095855, 'r5': 0.10054967153773964, 'r10': 0.15417616302453413, 'mrr': np.float64(0.09668444803065168)}
 --------------
+GraphCodeBERT, CodeBERT, UniXCoder combined adapter (rank 32) model with UniXCoder tokenizer results with cosine similarity, max length padding and truncation, 512 text and code max lengths.
+zero-shot test result: {'r1': 21.872905215176296, 'r5': 38.21557849577692, 'r10': 45.38141842069982, 'mrr': np.float64(29.856519117681636)}
+--------------
