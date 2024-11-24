@@ -37,19 +37,25 @@ def get_dataset(root_path, languages, split):
 
     return torch_dataset
 
-def get_model():
-    model = AutoModel.from_pretrained('microsoft/graphcodebert-base')
-    tokenizer = AutoTokenizer.from_pretrained('microsoft/graphcodebert-base')
+def get_model(model_name='microsoft/codebert-base'):
+    model = AutoModel.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer.pad_token = tokenizer.eos_token
     lora_config = LoraConfig(
-        r=16,
-        lora_alpha=32,
-        target_modules=["query", "value"],
+        r=64,
+        lora_alpha=128,
+        target_modules=["encoder.layer.4.attention.self.query",
+            "encoder.layer.4.attention.self.value",
+            "encoder.layer.6.attention.self.query",
+            "encoder.layer.6.attention.self.value",
+            "encoder.layer.10.attention.self.query",
+            "encoder.layer.10.attention.self.value"],
         lora_dropout=0.1
     )
     
     # model = get_peft_model(model, lora_config)
-    model.add_adapter(lora_config, adapter_name="graphcodebert-text2code-lora-r16")
-    model.set_adapter("graphcodebert-text2code-lora-r16")
+    model.add_adapter(lora_config, adapter_name="starencoder-text2code-r64")
+    model.set_adapter("starencoder-text2code-r64")
     return model, tokenizer
 
 def collate_fn(batch, tokenizer):
@@ -128,8 +134,10 @@ def run(model, tokenizer):
     )
     trainer.train()
 
-model, tokenizer = get_model()
-
+# for model_name in ['microsoft/codebert-base', 'microsoft/graphcodebert-base', 'microsoft/unixcoder-base']:
+model_name = 'bigcode/starencoder'
+model, tokenizer = get_model(model_name)
 run(model, tokenizer)
+print(f"\n\n Training completed with {model_name}. \n\n")
+model.push_to_hub("starencoder-text2code-r64")
 
-model.push_to_hub("graphcodebert-text2code-lora-r16")

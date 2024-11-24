@@ -9,23 +9,27 @@ Original file is located at
 
 
 from peft import LoraConfig, get_peft_model
-from transformers import RobertaTokenizer, RobertaModel
+from transformers import AutoTokenizer, AutoModel
 
 
 def get_model():
-    model = RobertaModel.from_pretrained('microsoft/codebert-base')
-    tokenizer = RobertaTokenizer.from_pretrained('microsoft/codebert-base')
+    model = RobertaModel.from_pretrained('bigcode/starencoder', trust_remote_code=True)
+    tokenizer = RobertaTokenizer.from_pretrained('microsoft/unixcoder-base', trust_remote_code=True)
+    tokenizer.pad_token = tokenizer.eos_token
+    for name, module in model.named_modules():
+        print(name)
+    # print(model.config)
     model = model.eval().cuda()
     lora_config = LoraConfig(
-        r=16,
-        lora_alpha=32,
-        target_modules=["query", "value"],
+        r=64,
+        lora_alpha=128,
+        target_modules=['query', 'value'],
         lora_dropout=0.1
     )
     
     # model = get_peft_model(model, lora_config)
-    model.add_adapter(lora_config, adapter_name="codebert-code2code-lora-r16")
-    model.set_adapter("codebert-code2code-lora-r16")
+    model.add_adapter(lora_config, adapter_name="starencoder-code2code-r64")
+    model.set_adapter("starencoder-code2code-r64")
 
     # model.print_trainable_parameters()
     return model, tokenizer
@@ -70,4 +74,4 @@ print("active adapter before training: ", model.active_adapters())
 
 trainer.train()
 
-model.push_to_hub("codebert-code2code-lora-r16")
+model.push_to_hub("starencoder-code2code-r64")
