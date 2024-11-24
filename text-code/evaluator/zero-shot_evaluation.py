@@ -48,13 +48,13 @@ def contrast_evaluation(text_embeds, code_embeds, img2txt):
     tr10 = 100.0 * len(np.where(ranks < 10)[0]) / len(ranks)
     mrr = 100.0 * np.mean(1 / (ranks + 1))
 
-    eval_result = {'r1': tr1,
-                   'r5': tr5,
-                   'r10': tr10,
-                   'mrr': mrr}
+    eval_result = {'r1': f"{tr1:.2f}",
+                   'r5': f"{tr5:.2f}",
+                   'r10': f"{tr10:.2f}",
+                   'mrr': f"{mrr:.2f}"}
     return eval_result
 
-def evaluation_script(language, model_name='microsoft/unixcoder-base'):
+def evaluation_script(language, model_name='microsoft/unixcoder-base', peft_eval=False):
     print("\nCreating retrieval dataset")
     _, _, test_dataset, code_dataset = create_dataset('../../dataset/CSN', language)
 
@@ -64,32 +64,39 @@ def evaluation_script(language, model_name='microsoft/unixcoder-base'):
 
     tokenizer = RobertaTokenizer.from_pretrained(model_name, trust_remote_code=True)
     model = RobertaModel.from_pretrained(model_name, trust_remote_code=True)
+    
+    if peft_eval:
+        peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-text2code-r32", adapter_name="text2code")
+        peft_model.eval()  # Set to evaluation mode
+        peft_model.set_adapter("text2code")
 
-    peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-text2code-r32", adapter_name="text2code")
-    peft_model.eval()  # Set to evaluation mode
-    peft_model.set_adapter("text2code")
+        print(peft_model)
 
-    print(peft_model)
-
-    print("Active adapters: ", peft_model.active_adapters)
+        print("Active adapters: ", peft_model.active_adapters)
+        model = peft_model
 
     print('\nStart zero-shot evaluation...')
     device = torch.device('cuda')
-    peft_model.to(device)
-    peft_model.eval()
+    model.to(device)
+    model.eval()
 
-    text_embeds = get_feats(peft_model, tokenizer, test_loader, 512, device, desc='Get text feats')
-    code_embeds = get_feats(peft_model, tokenizer, code_loader, 512, device, desc='Get code feats')
+    text_embeds = get_feats(model, tokenizer, test_loader, 512, device, desc='Get text feats')
+    code_embeds = get_feats(model, tokenizer, code_loader, 512, device, desc='Get code feats')
     test_result = contrast_evaluation(text_embeds, code_embeds, test_loader.dataset.text2code)
 
     print(f'\n====> zero-shot test result: ', test_result)
     return test_result
 
-for language in ['ruby', 'go', 'php', 'python', 'java', 'javascript']:
-    test_result = evaluation_script(language, model_name='microsoft/unixcoder-base')
-    with open('text2code_combined_results.txt', "a") as file:
-        file.write("Combined Adapter Results ------------\n")
+file = open('text2code_combined_results.txt', "a")
+
+for model_name in ['microsoft/unixcoder-base', 'microsoft/graphcodebert-base', 'microsoft/codebert-base']:
+    file.write(f"{model_name} results: \n")
+    for language in ['ruby', 'go', 'php', 'python', 'java', 'javascript']:
         file.write(f"{language} results: \n")
-        file.write("CodeBERT PEFT (rank 32) model results with cosine similarity, max length padding and truncation, 512 text and code max lengths.\n")
+        test_result = evaluation_script(language, model_name=model_name, peft_eval=False)
+        file.write("Base Model Results ------------\n")
+        file.write(f"zero-shot test result: {test_result}")
+        test_result = evaluation_script(language, model_name=model_name, peft_eval=True)
+        file.write("PEFT Model Results ------------\n")
         file.write(f"zero-shot test result: {test_result}")
         file.write('\n--------------\n')
