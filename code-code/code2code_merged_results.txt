@@ -259,3 +259,53 @@ PEFT Model Results------------------
 Python
 zero-shot test result: {'r1': '17.52', 'r5': '73.24', 'r10': '82.66', 'mrr': '38.73'}
 --------------
+bigcode/starencoder results: ------------
+-----------------
+C results: 
+bigcode/starencoder results: ------------
+-----------------
+C results: 
+bigcode/starencoder results: ------------
+-----------------
+C results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '4.59', 'r5': '28.98', 'r10': '48.76', 'mrr': '17.48'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '17.31', 'r5': '82.33', 'r10': '96.11', 'mrr': '40.89'}
+--------------
+PHP results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '19.22', 'r5': '73.82', 'r10': '79.44', 'mrr': '39.78'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '19.41', 'r5': '90.61', 'r10': '96.93', 'mrr': '43.79'}
+--------------
+Java results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '22.66', 'r5': '52.76', 'r10': '57.68', 'mrr': '35.59'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '22.92', 'r5': '91.63', 'r10': '96.43', 'mrr': '48.10'}
+--------------
+C++ results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '21.57', 'r5': '64.62', 'r10': '68.88', 'mrr': '39.50'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '22.77', 'r5': '91.35', 'r10': '96.05', 'mrr': '47.79'}
+--------------
+C# results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '22.63', 'r5': '52.10', 'r10': '57.57', 'mrr': '35.31'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '22.73', 'r5': '91.66', 'r10': '96.51', 'mrr': '47.96'}
+--------------
+Javascript results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '21.86', 'r5': '66.24', 'r10': '70.35', 'mrr': '40.41'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '22.59', 'r5': '90.89', 'r10': '95.56', 'mrr': '47.57'}
+--------------
+Python results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '12.20', 'r5': '43.60', 'r10': '55.85', 'mrr': '25.93'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '21.41', 'r5': '89.75', 'r10': '95.33', 'mrr': '45.96'}
+--------------
