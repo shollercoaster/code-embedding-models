@@ -122,3 +122,82 @@ Base Model Results ------------
 zero-shot test result: {'r1': '0.00', 'r5': '0.03', 'r10': '0.03', 'mrr': '0.06'}PEFT Model Results ------------
 zero-shot test result: {'r1': '0.00', 'r5': '0.03', 'r10': '0.03', 'mrr': '0.06'}
 --------------
+bigcode/starencoder results: ----------
+-----------------
+ruby results: 
+bigcode/starencoder results: ----------
+-----------------
+ruby results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '2.85', 'r5': '4.84', 'r10': '6.90', 'mrr': '4.41'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '5.39', 'r5': '12.37', 'r10': '16.57', 'mrr': '9.17'}
+--------------
+go results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '1.07', 'r5': '2.22', 'r10': '3.09', 'mrr': '1.85'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '4.35', 'r5': '9.20', 'r10': '11.80', 'mrr': '6.90'}
+--------------
+php results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '0.31', 'r5': '0.65', 'r10': '0.93', 'mrr': '0.57'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '0.69', 'r5': '1.95', 'r10': '2.83', 'mrr': '1.48'}
+--------------
+python results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '1.23', 'r5': '2.88', 'r10': '3.73', 'mrr': '2.14'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '2.04', 'r5': '4.77', 'r10': '6.69', 'mrr': '3.66'}
+--------------
+java results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '1.10', 'r5': '2.45', 'r10': '3.28', 'mrr': '1.89'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '0.79', 'r5': '2.06', 'r10': '3.10', 'mrr': '1.66'}
+--------------
+javascript results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '0.97', 'r5': '1.85', 'r10': '2.40', 'mrr': '1.55'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '0.76', 'r5': '2.43', 'r10': '3.28', 'mrr': '1.77'}
+--------------
+microsoft/unixcoder-base results: ----------
+-----------------
+ruby results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '34.26', 'r5': '55.51', 'r10': '62.57', 'mrr': '44.06'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '34.81', 'r5': '54.08', 'r10': '60.75', 'mrr': '43.79'}
+--------------
+go results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '39.07', 'r5': '61.48', 'r10': '68.97', 'mrr': '49.59'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '38.83', 'r5': '60.05', 'r10': '67.48', 'mrr': '48.91'}
+--------------
+php results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '15.56', 'r5': '29.06', 'r10': '35.71', 'mrr': '22.31'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '15.29', 'r5': '28.29', 'r10': '34.64', 'mrr': '21.79'}
+--------------
+python results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '21.62', 'r5': '38.28', 'r10': '45.76', 'mrr': '29.76'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '21.73', 'r5': '38.08', 'r10': '45.21', 'mrr': '29.73'}
+--------------
+java results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '25.35', 'r5': '44.27', 'r10': '51.80', 'mrr': '34.47'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '24.99', 'r5': '43.73', 'r10': '50.85', 'mrr': '33.95'}
+--------------
+javascript results: 
+Base Model Results ------------
+zero-shot test result: {'r1': '24.04', 'r5': '40.35', 'r10': '47.52', 'mrr': '32.05'}
+PEFT Model Results ------------
+zero-shot test result: {'r1': '23.52', 'r5': '38.83', 'r10': '45.49', 'mrr': '31.17'}
+--------------
