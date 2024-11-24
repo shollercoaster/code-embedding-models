@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 import torch
-from transformers import RobertaTokenizer, RobertaModel
+from transformers import RobertaTokenizer, RobertaModel, AutoTokenizer, AutoModel
 from data_utils import create_dataset, create_loader
 from peft import PeftModel, PeftConfig
 
@@ -54,7 +54,7 @@ def contrast_evaluation(text_embeds, code_embeds, img2txt):
                    'mrr': f"{mrr:.2f}"}
     return eval_result
 
-def evaluation_script(language, model_name='microsoft/unixcoder-base', peft_eval=False):
+def get_model_and_dataset(model_name, language, peft_eval=False):
     print("\nCreating retrieval dataset")
     _, _, test_dataset, code_dataset = create_dataset('../../dataset/CSN', language)
 
@@ -73,8 +73,10 @@ def evaluation_script(language, model_name='microsoft/unixcoder-base', peft_eval
         print(peft_model)
 
         print("Active adapters: ", peft_model.active_adapters)
-        model = peft_model
+        return peft_model, tokenizer, test_loader, code_loader
+    return model, tokenizer, test_loader, code_loader
 
+def evaluation_script(model, tokenizer, test_loader, code_loader):
     print('\nStart zero-shot evaluation...')
     device = torch.device('cuda')
     model.to(device)
@@ -89,14 +91,17 @@ def evaluation_script(language, model_name='microsoft/unixcoder-base', peft_eval
 
 file = open('text2code_combined_results.txt', "a")
 
-for model_name in ['microsoft/unixcoder-base', 'microsoft/graphcodebert-base', 'microsoft/codebert-base']:
-    file.write(f"{model_name} results: \n")
+for model_name in ["bigcode/starencoder"]: #'microsoft/unixcoder-base', 'microsoft/graphcodebert-base', 'microsoft/codebert-base']:
+    file.write(f"{model_name} results: ----------\n")
+    file.write("-----------------\n")
     for language in ['ruby', 'go', 'php', 'python', 'java', 'javascript']:
         file.write(f"{language} results: \n")
-        test_result = evaluation_script(language, model_name=model_name, peft_eval=False)
+        model, tokenizer, test_loader, code_loader = get_model_and_dataset(model_name, language, False)
+        test_result = evaluation_script(model, tokenizer, test_loader, code_loader)
         file.write("Base Model Results ------------\n")
-        file.write(f"zero-shot test result: {test_result}")
-        test_result = evaluation_script(language, model_name=model_name, peft_eval=True)
+        file.write(f"zero-shot test result: {test_result}\n")
+        model, tokenizer, test_loader, code_loader = get_model_and_dataset(model_name, language, True)
+        test_result = evaluation_script(model, tokenizer, test_loader, code_loader)
         file.write("PEFT Model Results ------------\n")
         file.write(f"zero-shot test result: {test_result}")
         file.write('\n--------------\n')

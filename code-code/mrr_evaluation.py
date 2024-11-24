@@ -138,16 +138,8 @@ def contrast_evaluation(query_embeds, code_embeds, ground_truth_indices):
     }
     return eval_result
 
-def main_evaluation_script(file_path, model_name="microsoft/codebert-base", peft_eval=True):
-    """
-    Main evaluation script to compute R@1, R@5, R@10, and MRR for a code2code search task.
-    
-    Parameters:
-    - file_path (str): Path to the test JSONL file.
-    - model_name (str): Pre-trained model name for the tokenizer and model.
-    - batch_size (int): Batch size for DataLoader.
-    - max_length (int): Maximum sequence length for token embeddings.
-    """
+def get_model_and_dataset(model_name, language, peft_eval=False):
+    file_path = f"../xlcost_data/retrieval/code2code_search/program_level/{language}/test.jsonl"
     data = load_data_from_jsonl(file_path)
     
     tokenizer = RobertaTokenizer.from_pretrained(model_name)
@@ -162,12 +154,11 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", peft
         print(peft_model)
 
         print("Active adapters: ", peft_model.active_adapters)
-        model = peft_model
-    
-    # device = torch.device('cuda')
-    # model.to(device)
-    model.eval()
+        return peft_model, tokenizer, data
+    return model, tokenizer, data
 
+def evaluation_script(data, model, tokenizer):
+    model.eval()
     query_embeddings = []
     code_embeddings = []
     ground_truth_indices = []
@@ -191,20 +182,20 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", peft
     print(f"R@10: {eval_result['r10']}%")
     print(f"MRR: {eval_result['mrr']}%")
     
-    with open('code2code_merged_results.txt', "a") as file:
-        if not peft_eval:
-            file.write("Base Model Results------------------\n\n")
-        else:
-            file.write("PEFT Model Results------------------\n\n")
-        file.write(f"{language}\n")
-        file.write(f"zero-shot test result: {eval_result}")
-        file.write('\n--------------\n')
     return eval_result
 
-
-for model_name in ["microsoft/unixcoder-base", "microsoft/graphcodebert-base", "microsoft/codebert-base"]:
+file = open('code2code_merged_results.txt', "a")
+for model_name in ["bigcode/starencoder"]: #"microsoft/unixcoder-base", "microsoft/graphcodebert-base", "microsoft/codebert-base"]:
+    file.write(f"{model_name} results: ------------\n")
+    file.write("-----------------\n")
     for language in ["C", "PHP", "Java", "C++", "C#", "Javascript", "Python"]:
-        test_file_path = f"../xlcost_data/retrieval/code2code_search/program_level/{language}/test.jsonl"
-        base_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name, peft_eval=False)
-        peft_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name, peft_eval=True)
-
+        file.write(f"{language} results: \n")
+        model, tokenizer, data = get_model_and_dataset(model_name, language, False)
+        test_result = evaluation_script(data, model, tokenizer)
+        file.write("Base Model Results ------------\n")
+        file.write(f"zero-shot test result: {test_result}\n")
+        model, tokenizer, data = get_model_and_dataset(model_name, language, True)
+        test_result = evaluation_script(data, model, tokenizer)
+        file.write("PEFT Model Results ------------\n")
+        file.write(f"zero-shot test result: {test_result}")
+        file.write('\n--------------\n')
