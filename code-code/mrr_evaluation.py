@@ -131,14 +131,14 @@ def contrast_evaluation(query_embeds, code_embeds, ground_truth_indices):
     mrr = 100.0 * np.mean(1 / (ranks + 1))
 
     eval_result = {
-        'r1': tr1,
-        'r5': tr5,
-        'r10': tr10,
-        'mrr': mrr
+        'r1': f'{tr1:.2f}',
+        'r5': f'{tr5:.2f}',
+        'r10': f'{tr10:.2f}',
+        'mrr': f'{mrr:.2f}'
     }
     return eval_result
 
-def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_length=128):
+def main_evaluation_script(file_path, model_name="microsoft/codebert-base", peft_eval=True):
     """
     Main evaluation script to compute R@1, R@5, R@10, and MRR for a code2code search task.
     
@@ -154,25 +154,27 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
     print("Tokenizer max length: ", tokenizer.model_max_length)
     model = RobertaModel.from_pretrained(model_name)
     
-    peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-code2code-r32", adapter_name="code2code")
-    peft_model.eval()  # Set to evaluation mode
-    peft_model.set_adapter("code2code")
+    if peft_eval:
+        peft_model = PeftModel.from_pretrained(model, "schaturv/microsoft-code2code-r32", adapter_name="code2code")
+        peft_model.eval()  # Set to evaluation mode
+        peft_model.set_adapter("code2code")
 
-    print(peft_model)
+        print(peft_model)
 
-    print("Active adapters: ", peft_model.active_adapters)
+        print("Active adapters: ", peft_model.active_adapters)
+        model = peft_model
     
     # device = torch.device('cuda')
     # model.to(device)
-    peft_model.eval()
+    model.eval()
 
     query_embeddings = []
     code_embeddings = []
     ground_truth_indices = []
 
     for idx, entry in enumerate(tqdm(data, desc="Generating embeddings")):
-        query_embedding = compute_embeddings(peft_model, tokenizer, entry["docstring_tokens"]).squeeze(0)
-        code_embedding = compute_embeddings(peft_model, tokenizer, entry["code_tokens"]).squeeze(0)
+        query_embedding = compute_embeddings(model, tokenizer, entry["docstring_tokens"]).squeeze(0)
+        code_embedding = compute_embeddings(model, tokenizer, entry["code_tokens"]).squeeze(0)
 
         query_embeddings.append(query_embedding)
         code_embeddings.append(code_embedding)
@@ -184,19 +186,25 @@ def main_evaluation_script(file_path, model_name="microsoft/codebert-base", max_
 
     eval_result = contrast_evaluation(query_embeddings, code_embeddings, ground_truth_indices)
 
-    print(f"R@1: {eval_result['r1']:.2f}%")
-    print(f"R@5: {eval_result['r5']:.2f}%")
-    print(f"R@10: {eval_result['r10']:.2f}%")
-    print(f"MRR: {eval_result['mrr']:.2f}%")
+    print(f"R@1: {eval_result['r1']}%")
+    print(f"R@5: {eval_result['r5']}%")
+    print(f"R@10: {eval_result['r10']}%")
+    print(f"MRR: {eval_result['mrr']}%")
     
-    with open('code2code_results.txt', "a") as file:
-        file.write("CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.\n")
+    with open('code2code_merged_results.txt', "a") as file:
+        if not peft_eval:
+            file.write("Base Model Results------------------\n\n")
+        else:
+            file.write("PEFT Model Results------------------\n\n")
+        file.write(f"{language}\n")
         file.write(f"zero-shot test result: {eval_result}")
         file.write('\n--------------\n')
     return eval_result
 
 
-if __name__ == "__main__":
-    test_file_path = "../xlcost_data/retrieval/code2code_search/program_level/Python/test.jsonl"
-    model_name = "microsoft/graphcodebert-base"
-    avg_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name)
+for model_name in ["microsoft/unixcoder-base", "microsoft/graphcodebert-base", "microsoft/codebert-base"]:
+    for language in ["C", "PHP", "Java", "C++", "C#", "Javascript", "Python"]:
+        test_file_path = f"../xlcost_data/retrieval/code2code_search/program_level/{language}/test.jsonl"
+        base_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name, peft_eval=False)
+        peft_mrr = main_evaluation_script(file_path=test_file_path, model_name=model_name, peft_eval=True)
+

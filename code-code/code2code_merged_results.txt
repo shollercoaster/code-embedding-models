@@ -1,0 +1,261 @@
+microsoft/graphcodebert-base------------------
+
+C
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+test result: {'r1': 17.314487632508833, 'r5': 79.50530035335689, 'r10': 95.40636042402826, 'mrr': np.float64(40.72549671972869)}
+--------------
+microsoft/graphcodebert-base------------------
+
+PHP
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+test result: {'r1': 19.284802043422733, 'r5': 89.33588761174968, 'r10': 95.65772669220945, 'mrr': np.float64(43.53018170786355)}
+--------------
+microsoft/graphcodebert-base------------------
+
+Java
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+test result: {'r1': 22.99642674834099, 'r5': 89.58652373660031, 'r10': 95.5079122001021, 'mrr': np.float64(47.75234878163419)}
+--------------
+microsoft/graphcodebert-base------------------
+
+C++
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+test result: {'r1': 22.926829268292682, 'r5': 90.60333761232349, 'r10': 95.84082156611039, 'mrr': np.float64(47.95697844691666)}
+--------------
+microsoft/graphcodebert-base------------------
+
+C#
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+test result: {'r1': 22.80656747049769, 'r5': 90.61056952283222, 'r10': 95.81836839404824, 'mrr': np.float64(47.81359465628688)}
+--------------
+microsoft/graphcodebert-base------------------
+
+Javascript
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+test result: {'r1': 22.591534666320435, 'r5': 90.88548428979486, 'r10': 96.02700597247468, 'mrr': np.float64(47.7099429978236)}
+--------------
+microsoft/graphcodebert-base------------------
+
+Python
+CodeBERT, GraphCodeBERT (tokenizer) and UniXCoder combined PEFT model (rank 32) results with cosine similarity, dataloader batch size 4, max length (512) padding and truncation.
+test result: {'r1': 22.060731897222944, 'r5': 93.30391902413703, 'r10': 97.92369582143785, 'mrr': np.float64(47.50544693123692)}
+
+--------------
+UniXCoder
+--------------
+Base Model Results------------------
+
+C
+zero-shot test result: {'r1': '16.25', 'r5': '70.32', 'r10': '91.17', 'mrr': '37.64'}
+--------------
+PEFT Model Results------------------
+
+C
+zero-shot test result: {'r1': '16.25', 'r5': '70.67', 'r10': '90.46', 'mrr': '37.63'}
+--------------
+Base Model Results------------------
+
+PHP
+zero-shot test result: {'r1': '18.90', 'r5': '85.25', 'r10': '95.98', 'mrr': '42.56'}
+--------------
+PEFT Model Results------------------
+
+PHP
+zero-shot test result: {'r1': '18.97', 'r5': '84.99', 'r10': '95.91', 'mrr': '42.61'}
+--------------
+Base Model Results------------------
+
+Java
+zero-shot test result: {'r1': '22.66', 'r5': '83.92', 'r10': '93.47', 'mrr': '45.84'}
+--------------
+PEFT Model Results------------------
+
+Java
+zero-shot test result: {'r1': '22.66', 'r5': '83.95', 'r10': '93.36', 'mrr': '45.86'}
+--------------
+Base Model Results------------------
+
+C++
+zero-shot test result: {'r1': '21.64', 'r5': '85.75', 'r10': '94.99', 'mrr': '45.51'}
+--------------
+PEFT Model Results------------------
+
+C++
+zero-shot test result: {'r1': '21.54', 'r5': '85.67', 'r10': '94.84', 'mrr': '45.48'}
+--------------
+Base Model Results------------------
+
+C#
+zero-shot test result: {'r1': '22.63', 'r5': '85.33', 'r10': '94.69', 'mrr': '46.01'}
+--------------
+PEFT Model Results------------------
+
+C#
+zero-shot test result: {'r1': '22.65', 'r5': '85.35', 'r10': '94.61', 'mrr': '46.04'}
+--------------
+Base Model Results------------------
+
+Javascript
+zero-shot test result: {'r1': '22.07', 'r5': '87.38', 'r10': '95.30', 'mrr': '46.50'}
+--------------
+PEFT Model Results------------------
+
+Javascript
+zero-shot test result: {'r1': '22.15', 'r5': '87.59', 'r10': '95.30', 'mrr': '46.52'}
+--------------
+Base Model Results------------------
+
+Python
+zero-shot test result: {'r1': '22.22', 'r5': '87.20', 'r10': '95.90', 'mrr': '46.68'}
+--------------
+PEFT Model Results------------------
+
+Python
+zero-shot test result: {'r1': '22.19', 'r5': '87.28', 'r10': '95.87', 'mrr': '46.68'}
+
+--------------
+GraphCodeBERT
+--------------
+Base Model Results------------------
+
+C
+zero-shot test result: {'r1': '16.61', 'r5': '55.12', 'r10': '63.60', 'mrr': '32.81'}
+--------------
+PEFT Model Results------------------
+
+C
+zero-shot test result: {'r1': '17.31', 'r5': '79.51', 'r10': '95.41', 'mrr': '40.73'}
+--------------
+Base Model Results------------------
+
+PHP
+zero-shot test result: {'r1': '19.09', 'r5': '68.33', 'r10': '76.88', 'mrr': '37.93'}
+--------------
+PEFT Model Results------------------
+
+PHP
+zero-shot test result: {'r1': '19.28', 'r5': '89.34', 'r10': '95.66', 'mrr': '43.53'}
+--------------
+Base Model Results------------------
+
+Java
+zero-shot test result: {'r1': '22.74', 'r5': '40.12', 'r10': '44.23', 'mrr': '30.86'}
+--------------
+PEFT Model Results------------------
+
+Java
+zero-shot test result: {'r1': '23.00', 'r5': '89.59', 'r10': '95.51', 'mrr': '47.75'}
+--------------
+Base Model Results------------------
+
+C++
+zero-shot test result: {'r1': '20.18', 'r5': '50.58', 'r10': '55.12', 'mrr': '34.04'}
+--------------
+PEFT Model Results------------------
+
+C++
+zero-shot test result: {'r1': '22.93', 'r5': '90.60', 'r10': '95.84', 'mrr': '47.96'}
+--------------
+Base Model Results------------------
+
+C#
+zero-shot test result: {'r1': '22.83', 'r5': '42.25', 'r10': '45.61', 'mrr': '31.74'}
+--------------
+PEFT Model Results------------------
+
+C#
+zero-shot test result: {'r1': '22.81', 'r5': '90.61', 'r10': '95.82', 'mrr': '47.81'}
+--------------
+Base Model Results------------------
+
+Javascript
+zero-shot test result: {'r1': '21.11', 'r5': '66.01', 'r10': '70.37', 'mrr': '39.53'}
+--------------
+PEFT Model Results------------------
+
+Javascript
+zero-shot test result: {'r1': '22.59', 'r5': '90.89', 'r10': '96.03', 'mrr': '47.71'}
+--------------
+Base Model Results------------------
+
+Python
+zero-shot test result: {'r1': '8.62', 'r5': '34.34', 'r10': '45.06', 'mrr': '20.30'}
+--------------
+PEFT Model Results------------------
+
+Python
+zero-shot test result: {'r1': '22.06', 'r5': '93.30', 'r10': '97.92', 'mrr': '47.51'}
+
+--------------
+CodeBERT
+--------------
+Base Model Results------------------
+
+C
+zero-shot test result: {'r1': '15.19', 'r5': '41.34', 'r10': '49.12', 'mrr': '27.45'}
+--------------
+PEFT Model Results------------------
+
+C
+zero-shot test result: {'r1': '17.31', 'r5': '81.98', 'r10': '94.70', 'mrr': '40.89'}
+--------------
+Base Model Results------------------
+
+PHP
+zero-shot test result: {'r1': '17.50', 'r5': '46.93', 'r10': '52.17', 'mrr': '30.47'}
+--------------
+PEFT Model Results------------------
+
+PHP
+zero-shot test result: {'r1': '19.41', 'r5': '87.80', 'r10': '92.91', 'mrr': '43.25'}
+--------------
+Base Model Results------------------
+
+Java
+zero-shot test result: {'r1': '21.21', 'r5': '28.08', 'r10': '30.22', 'mrr': '24.80'}
+--------------
+PEFT Model Results------------------
+
+Java
+zero-shot test result: {'r1': '23.00', 'r5': '87.47', 'r10': '91.55', 'mrr': '47.18'}
+--------------
+Base Model Results------------------
+
+C++
+zero-shot test result: {'r1': '6.14', 'r5': '14.43', 'r10': '18.10', 'mrr': '10.54'}
+--------------
+PEFT Model Results------------------
+
+C++
+zero-shot test result: {'r1': '22.80', 'r5': '87.73', 'r10': '91.81', 'mrr': '47.02'}
+--------------
+Base Model Results------------------
+
+C#
+zero-shot test result: {'r1': '21.16', 'r5': '29.73', 'r10': '32.22', 'mrr': '25.53'}
+--------------
+PEFT Model Results------------------
+
+C#
+zero-shot test result: {'r1': '22.83', 'r5': '87.46', 'r10': '91.56', 'mrr': '47.03'}
+--------------
+Base Model Results------------------
+
+Javascript
+zero-shot test result: {'r1': '15.79', 'r5': '36.87', 'r10': '41.81', 'mrr': '25.56'}
+--------------
+PEFT Model Results------------------
+
+Javascript
+zero-shot test result: {'r1': '22.67', 'r5': '86.78', 'r10': '91.15', 'mrr': '46.75'}
+--------------
+Base Model Results------------------
+
+Python
+zero-shot test result: {'r1': '2.96', 'r5': '7.40', 'r10': '9.86', 'mrr': '5.48'}
+--------------
+PEFT Model Results------------------
+
+Python
+zero-shot test result: {'r1': '17.52', 'r5': '73.24', 'r10': '82.66', 'mrr': '38.73'}
+--------------
